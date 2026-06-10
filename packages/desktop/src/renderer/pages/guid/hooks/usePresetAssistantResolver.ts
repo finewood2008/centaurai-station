@@ -17,6 +17,11 @@ type UsePresetAssistantResolverOptions = {
    */
   assistants: Assistant[];
   localeKey: string;
+  /**
+   * Session-scoped engine carried over from the agent pill bar. When set, it
+   * wins over the assistant's stored `preset_agent_type`.
+   */
+  presetEngineOverride?: string | null;
 };
 
 type UsePresetAssistantResolverResult = {
@@ -46,6 +51,7 @@ type UsePresetAssistantResolverResult = {
 export const usePresetAssistantResolver = ({
   assistants,
   localeKey,
+  presetEngineOverride,
 }: UsePresetAssistantResolverOptions): UsePresetAssistantResolverResult => {
   const resolvePresetRulesAndSkills = useCallback(
     async (
@@ -95,10 +101,11 @@ export const usePresetAssistantResolver = ({
     (agentInfo: { agent_type: string; backend?: string; custom_agent_id?: string } | undefined): string => {
       if (!agentInfo) return 'gemini';
       if (!agentInfo.custom_agent_id) return agentInfo.backend || agentInfo.agent_type;
+      if (presetEngineOverride) return presetEngineOverride;
       const assistant = assistants.find((a) => a.id === agentInfo.custom_agent_id);
       return assistant?.preset_agent_type || 'gemini';
     },
-    [assistants]
+    [assistants, presetEngineOverride]
   );
 
   const resolveEnabledSkills = useCallback(

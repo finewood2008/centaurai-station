@@ -1,6 +1,7 @@
 import React from 'react';
 import useSWR from 'swr';
 import { getAgentLogo } from '@renderer/utils/model/agentLogo';
+import { getAgentDisplayName } from '@renderer/utils/model/agentTypes';
 import { usePresetAssistantInfo } from '@renderer/hooks/agent/usePresetAssistantInfo';
 import { resolveBackendAssetUrl } from '@renderer/utils/platform';
 import { getConversationOrNull } from '@/renderer/pages/conversation/utils/conversationCache';
@@ -39,6 +40,7 @@ const TeamAgentIdentity: React.FC<Props> = ({
   const { info: presetInfo } = usePresetAssistantInfo(conversation ?? undefined);
   const explicitLogo = resolveBackendAssetUrl(icon) ?? icon;
   const backendLogo = getAgentLogo(agent_type);
+  const displayName = getAgentDisplayName({ agent_type, name: agent_name });
 
   const defaultLogoClassName = 'w-16px h-16px object-contain rounded-2px opacity-80';
   const resolvedLogoClassName = logoClassName ?? defaultLogoClassName;
@@ -54,12 +56,12 @@ const TeamAgentIdentity: React.FC<Props> = ({
       return <img src={presetInfo.logo} alt={presetInfo.name} className={resolvedLogoClassName} />;
     }
     if (explicitLogo) {
-      return <img src={explicitLogo} alt={agent_name} className={resolvedLogoClassName} />;
+      return <img src={explicitLogo} alt={displayName} className={resolvedLogoClassName} />;
     }
     if (backendLogo) {
       return <img src={backendLogo} alt={agent_type} className={resolvedLogoClassName} />;
     }
-    return <span className={resolvedAvatarClassName}>{agent_name.charAt(0).toUpperCase() || '🤖'}</span>;
+    return <span className={resolvedAvatarClassName}>{displayName.charAt(0).toUpperCase() || '🤖'}</span>;
   };
 
   const crownIcon = (
@@ -85,7 +87,7 @@ const TeamAgentIdentity: React.FC<Props> = ({
   return (
     <div className={['flex items-center gap-8px', className].filter(Boolean).join(' ')}>
       {renderAvatar()}
-      <span className={['min-w-0 flex-1 truncate', nameClassName].filter(Boolean).join(' ')}>{agent_name}</span>
+      <span className={['min-w-0 flex-1 truncate', nameClassName].filter(Boolean).join(' ')}>{displayName}</span>
       {isLeader && (
         <span
           data-testid='team-leader-crown'

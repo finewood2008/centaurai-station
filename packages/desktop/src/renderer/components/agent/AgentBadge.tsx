@@ -5,6 +5,7 @@
  */
 
 import { getAgentLogo } from '@/renderer/utils/model/agentLogo';
+import { getAgentDisplayName } from '@/renderer/utils/model/agentTypes';
 import { iconColors } from '@/renderer/styles/colors';
 import { Robot } from '@icon-park/react';
 import React, { useCallback } from 'react';
@@ -56,6 +57,7 @@ export const AgentLogoIcon: React.FC<
  */
 const AgentBadge: React.FC<AgentBadgeProps> = ({ backend, agent_name, agentLogo, agentLogoIsEmoji, assistantId }) => {
   const navigate = useNavigate();
+  const displayName = getAgentDisplayName({ backend, name: agent_name });
   const handleClick = useCallback(() => {
     if (!assistantId) return;
     navigate(`/settings/assistants?highlight=${encodeURIComponent(assistantId)}`);
@@ -73,7 +75,7 @@ const AgentBadge: React.FC<AgentBadgeProps> = ({ backend, agent_name, agentLogo,
         agentLogo={agentLogo}
         agentLogoIsEmoji={agentLogoIsEmoji}
       />
-      <span className='text-sm text-t-primary'>{agent_name || backend}</span>
+      <span className='text-sm text-t-primary'>{displayName}</span>
     </div>
   );
 };

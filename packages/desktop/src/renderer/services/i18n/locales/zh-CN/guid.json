@@ -26,5 +26,9 @@
     "statusTesting": "正在测试延迟...",
     "statusUnreachable": "不可达",
     "statusAvailable": "可用"
-  }
+  },
+  "coreCapabilities": "核心能力",
+  "assistantsTitle": "助理",
+  "addAssistant": "添加助理",
+  "noAssistant": "不使用助理"
 }

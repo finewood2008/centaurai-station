@@ -509,6 +509,25 @@ export const dialog = {
 };
 
 // ---------------------------------------------------------------------------
+// Image generation — main-process IPC (spawns the builtin image-gen MCP).
+// Lets the toolbox generate images directly with the configured image model,
+// without routing through an agent's tool-calling.
+// ---------------------------------------------------------------------------
+
+export interface IDirectImageGenResult {
+  success: boolean;
+  text: string;
+  imagePath?: string;
+  error?: string;
+}
+
+export const imageGen = {
+  generate: bridge.buildProvider<IDirectImageGenResult, { prompt: string; image_uris?: string[]; workspace: string }>(
+    'image-gen.generate'
+  ),
+};
+
+// ---------------------------------------------------------------------------
 // File System — routed to /api/fs/* and /api/skills/*
 // ---------------------------------------------------------------------------
 

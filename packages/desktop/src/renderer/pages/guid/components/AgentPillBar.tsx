@@ -7,7 +7,7 @@
 import { resolveAgentLogo } from '@/renderer/utils/model/agentLogo';
 import { resolveExtensionAssetUrl } from '@/renderer/utils/platform';
 import { useLayoutContext } from '@/renderer/hooks/context/LayoutContext';
-import type { AgentSource } from '@/renderer/utils/model/agentTypes';
+import { getAgentDisplayName, type AgentSource } from '@/renderer/utils/model/agentTypes';
 import type { AvailableAgent } from '../types';
 import { Plus, Robot } from '@icon-park/react';
 import { Tooltip } from '@arco-design/web-react';
@@ -66,6 +66,7 @@ const AgentPillBar: React.FC<AgentPillBarProps> = ({
           .filter((agent) => !agent.is_preset)
           .map((agent, index) => {
             const isSelected = selectedAgentKey === getAgentKey(agent);
+            const displayName = getAgentDisplayName(agent);
             const extensionAvatar = resolveExtensionAssetUrl(agent.isExtension ? agent.avatar : undefined);
             // Remote and user-defined custom agents store emoji strings in
             // `avatar` — treat those as glyphs, not URLs. Builtin rows
@@ -129,7 +130,7 @@ const AgentPillBar: React.FC<AgentPillBarProps> = ({
                           : 'max-width 0.6s cubic-bezier(0.2, 0.8, 0.3, 1), opacity 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) 0.05s, margin 0.6s cubic-bezier(0.2, 0.8, 0.3, 1)',
                     }}
                   >
-                    {agent.name}
+                    {displayName}
                   </span>
                 </div>
               </React.Fragment>

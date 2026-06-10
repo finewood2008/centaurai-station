@@ -179,6 +179,14 @@ const isRemoteMode = hasSwitch('remote');
 const isResetPasswordMode = hasCommand('--resetpass');
 const isVersionMode = hasCommand('--version') || hasCommand('-v');
 
+function resolvePreferredBackendPort(): number | undefined {
+  const raw = process.env.AIONUI_DEV_BACKEND_PORT ?? process.env.AIONUI_BACKEND_PORT;
+  if (!raw) return undefined;
+  const port = Number.parseInt(raw, 10);
+  if (!Number.isFinite(port) || port <= 0 || port > 65535) return undefined;
+  return port;
+}
+
 // Flag to distinguish intentional quit from unexpected exit in WebUI mode
 let isExplicitQuit = false;
 
@@ -579,7 +587,8 @@ const handleAppReady = async (): Promise<void> => {
           onReady: (backendPort) => {
             markBackendReady(backendPort, 'backendManager.lateReady');
           },
-        }
+        },
+        resolvePreferredBackendPort()
       );
     },
     onStarted: (backendPort) => {

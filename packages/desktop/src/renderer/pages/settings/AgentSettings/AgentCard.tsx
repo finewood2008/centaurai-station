@@ -9,6 +9,7 @@ import { Avatar, Button, Switch, Typography } from '@arco-design/web-react';
 import { Delete, EditTwo, Robot } from '@icon-park/react';
 import { useTranslation } from 'react-i18next';
 import { resolveAgentLogo } from '@/renderer/utils/model/agentLogo';
+import { getAgentDisplayName } from '@/renderer/utils/model/agentTypes';
 import { resolveExtensionAssetUrl } from '@/renderer/utils/platform';
 
 type DetectedAgent = {
@@ -55,6 +56,7 @@ const AgentCard: React.FC<AgentCardProps> = (props) => {
 
   if (props.type === 'detected') {
     const { agent, onGoToChat } = props;
+    const displayName = getAgentDisplayName(agent);
     const extensionAvatar = resolveExtensionAssetUrl(agent.isExtension ? agent.avatar : undefined);
     const logo =
       extensionAvatar ||
@@ -75,7 +77,7 @@ const AgentCard: React.FC<AgentCardProps> = (props) => {
 
         <div className='mb-10px flex-1 text-center'>
           <Typography.Text className='block text-13px font-medium leading-18px line-clamp-2'>
-            {agent.name}
+            {displayName}
           </Typography.Text>
           <Typography.Text className='mt-4px block text-11px text-t-secondary'>
             {t('settings.agentManagement.detected')}

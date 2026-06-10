@@ -1053,3 +1053,410 @@
     max-width: 100px;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   CentaurAI homepage: two-column landing, segmented agent
+   selector, capability card, assistant rail.
+   ───────────────────────────────────────────────────────────── */
+
+/* Pass-through wrapper: the main column stays centered (its own styling),
+   the rail is pinned to the right edge of the page (absolute). */
+.guidTwoCol {
+  display: contents;
+}
+
+/* Minimal segmented agent selector */
+.agentSegmentBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+.agentSegment {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, var(--color-text-2));
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 8px;
+  opacity: 0.7;
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease,
+    color 0.18s ease;
+}
+.agentSegment:hover {
+  opacity: 1;
+  transform: scale(1.06);
+  color: var(--text-primary);
+}
+.agentSegmentIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.agentSegmentIcon img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+.agentSegmentEmoji {
+  font-size: 16px;
+  line-height: 1;
+}
+.agentSegmentSelected {
+  opacity: 1;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.agentSegmentSelected::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: #ef760d;
+}
+.agentSegmentName {
+  white-space: nowrap;
+}
+.agentSegmentAdd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, var(--color-text-2));
+  cursor: pointer;
+  border-radius: 8px;
+  opacity: 0.6;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+.agentSegmentAdd:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Capability card */
+.capabilityCardSlot {
+  width: 100%;
+  margin-bottom: 12px;
+  min-height: 150px;
+}
+.capabilityCard {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--bg-base, #fff);
+  border: 1px solid color-mix(in srgb, var(--color-border-2) 70%, transparent);
+  animation: capabilityFadeIn 0.22s ease;
+}
+:global([data-theme='dark']) .capabilityCard {
+  background: #262626;
+}
+@keyframes capabilityFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.capabilityHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+/* Large, gradient-ringed avatar frame (gives emoji/illustrated avatars a
+   polished, Pixar-like presentation). */
+.capabilityAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-base, #fff);
+  overflow: hidden;
+  padding: 3px;
+  box-sizing: border-box;
+  background-image:
+    linear-gradient(var(--bg-base, #fff), var(--bg-base, #fff)), linear-gradient(135deg, #ef760d, #0e62c6);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  border: 2px solid transparent;
+}
+:global([data-theme='dark']) .capabilityAvatar {
+  background-image: linear-gradient(#262626, #262626), linear-gradient(135deg, #ef760d, #0e62c6);
+}
+.capabilityAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.capabilityEmoji {
+  font-size: 30px;
+  line-height: 1;
+}
+.capabilityMeta {
+  min-width: 0;
+  flex: 1;
+  padding-top: 2px;
+}
+.capabilityName {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.capabilityAgentBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+  padding: 1px 8px 1px 4px;
+  border-radius: 10px;
+  background: var(--color-fill-2);
+  font-size: 11px;
+  color: var(--text-secondary, var(--color-text-3));
+}
+.capabilityAgentBadge img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+.capabilityDesc {
+  font-size: 12px;
+  color: var(--text-secondary, var(--color-text-3));
+  margin-top: 2px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.capabilitySkills {
+  margin-top: 12px;
+}
+.capabilitySkillsLabel {
+  font-size: 11px;
+  color: var(--text-secondary, var(--color-text-3));
+}
+.capabilitySkillsWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.capabilityChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 14px;
+  font-size: 12px;
+  background: var(--color-fill-2);
+  color: var(--text-primary);
+  border: 1px solid color-mix(in srgb, var(--color-border-2) 60%, transparent);
+}
+.capabilityPrompts {
+  margin-top: 12px;
+}
+.capabilityPromptsWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+.capabilityPrompt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 7px 11px;
+  border-radius: 9px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-primary);
+  background: var(--color-fill-1);
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition:
+    border-color 0.16s ease,
+    background 0.16s ease,
+    transform 0.16s ease;
+}
+.capabilityPrompt:hover {
+  border-color: color-mix(in srgb, #ef760d 45%, transparent);
+  background: var(--bg-base, #fff);
+  transform: translateX(2px);
+}
+:global([data-theme='dark']) .capabilityPrompt:hover {
+  background: #2f2f2f;
+}
+
+/* Assistant rail — pinned flush to the right edge of the page. */
+.assistantRail {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  width: 264px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 86vh;
+  z-index: 2;
+}
+.assistantRailTitle {
+  font-size: 12px;
+  color: var(--text-secondary, var(--color-text-3));
+  padding: 0 8px;
+}
+.assistantRailList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  padding: 2px;
+  scrollbar-width: thin;
+}
+.assistantRailList::-webkit-scrollbar {
+  width: 6px;
+}
+.assistantRailList::-webkit-scrollbar-thumb {
+  background: var(--color-fill-3);
+  border-radius: 3px;
+}
+.assistantRailItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--assistant-surface-bg, var(--color-fill-1));
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 0.24s cubic-bezier(0.2, 0.85, 0.3, 1),
+    box-shadow 0.24s ease,
+    border-color 0.24s ease,
+    background 0.24s ease;
+}
+.assistantRailItem:hover {
+  transform: translateX(-6px) scale(1.05);
+  border-color: color-mix(in srgb, #ef760d 55%, transparent);
+  box-shadow: 0 8px 22px rgba(239, 118, 13, 0.16);
+  background: var(--bg-base, #fff);
+  z-index: 1;
+}
+.assistantRailItem:hover .assistantRailName {
+  color: #ef760d;
+}
+:global([data-theme='dark']) .assistantRailItem:hover {
+  background: #2a2a2a;
+  box-shadow: 0 8px 22px rgba(239, 118, 13, 0.22);
+}
+.assistantRailItemSelected {
+  border-color: color-mix(in srgb, #ef760d 50%, transparent);
+}
+.assistantRailItem:hover .assistantRailAvatar {
+  transform: scale(1.12);
+}
+.assistantRailAvatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-fill-2);
+  overflow: hidden;
+  transition: transform 0.24s cubic-bezier(0.2, 0.85, 0.3, 1);
+}
+.assistantRailAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.assistantRailEmoji {
+  font-size: 16px;
+  line-height: 1;
+}
+.assistantRailName {
+  font-size: 13px;
+  color: var(--text-primary);
+  /* Show full names — wrap up to two lines before truncating. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  word-break: break-word;
+}
+.assistantRailAdd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px dashed var(--color-border-2);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-secondary, var(--color-text-3));
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+.assistantRailAdd:hover {
+  transform: scale(1.04);
+  border-color: #ef760d;
+  color: var(--text-primary);
+}
+
+/* On narrow windows the right edge gets crowded — drop the rail back into the
+   normal flow (centered, below the input) and lay it out horizontally. */
+@media (max-width: 1100px) {
+  .assistantRail {
+    position: static;
+    transform: none;
+    width: clamp(var(--app-min-width, 360px), calc(100% - 32px), 720px);
+    margin: 16px auto 0;
+    max-height: none;
+  }
+  .assistantRailList {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .assistantRailItem {
+    width: auto;
+  }
+  .assistantRailItem:hover {
+    transform: translateY(-4px) scale(1.05);
+  }
+}

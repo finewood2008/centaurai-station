@@ -26,5 +26,9 @@
     "statusTesting": "Тестирование задержки...",
     "statusUnreachable": "Недоступен",
     "statusAvailable": "Доступен"
-  }
+  },
+  "coreCapabilities": "Core capabilities",
+  "assistantsTitle": "Assistants",
+  "addAssistant": "Add assistant",
+  "noAssistant": "Без ассистента"
 }

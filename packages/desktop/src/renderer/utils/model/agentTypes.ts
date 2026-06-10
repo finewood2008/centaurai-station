@@ -101,6 +101,14 @@ export type AgentMetadata = {
   handshake?: AgentHandshake;
 };
 
+export function getAgentDisplayName(agent: { agent_type?: string; backend?: string; name?: string } | undefined): string {
+  if (!agent) return '';
+  const key = (agent.backend || agent.agent_type || '').toLowerCase();
+  if (key === 'aionrs' || key === 'aion-cli') return '直连CLI';
+  if (/^aion\s*cli$/i.test(agent.name || '') || /^aioncli$/i.test(agent.name || '')) return '直连CLI';
+  return agent.name || agent.backend || agent.agent_type || '';
+}
+
 /** Shared fetcher for DETECTED_AGENTS_SWR_KEY — single source of truth. */
 export async function fetchDetectedAgents(): Promise<AgentMetadata[]> {
   try {

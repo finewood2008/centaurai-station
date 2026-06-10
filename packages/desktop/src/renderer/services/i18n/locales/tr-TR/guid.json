@@ -26,5 +26,9 @@
     "statusTesting": "Testing latency...",
     "statusUnreachable": "Unreachable",
     "statusAvailable": "Available"
-  }
+  },
+  "coreCapabilities": "Core capabilities",
+  "assistantsTitle": "Assistants",
+  "addAssistant": "Add assistant",
+  "noAssistant": "Asistan kullanma"
 }

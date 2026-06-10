@@ -12,6 +12,28 @@
 
 import { resolveBackendAssetUrl } from '@/renderer/utils/platform';
 
+const CENTAURAI_AGENT_LOGO =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="120" y1="96" x2="904" y2="928" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#151827"/>
+      <stop offset="0.48" stop-color="#24304a"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="250" y1="230" x2="780" y2="790" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dff8ef"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+  <circle cx="768" cy="238" r="82" fill="#67e8f9" opacity="0.24"/>
+  <path d="M512 186 L780 818 H650 L594 678 H430 L374 818 H244 L512 186 Z M471 572 H553 L512 462 L471 572 Z" fill="url(#mark)"/>
+  <path d="M638 309 C598 273 548 255 489 255 C390 255 312 327 312 430 C312 536 391 607 498 607 C554 607 602 591 644 558 L700 657 C640 703 570 726 490 726 C309 726 182 602 182 431 C182 264 312 138 492 138 C574 138 647 163 707 212 L638 309 Z" fill="#ffffff" opacity="0.94"/>
+  <path d="M280 806 C344 856 421 882 512 882 C604 882 682 856 746 804" fill="none" stroke="#99f6e4" stroke-width="36" stroke-linecap="round" opacity="0.78"/>
+</svg>`);
+
 /**
  * Agent Logo 映射表
  * Agent Logo mapping table
@@ -20,7 +42,7 @@ import { resolveBackendAssetUrl } from '@/renderer/utils/platform';
  * Note: keys are lowercase, supports multiple variants (e.g., openclaw-gateway and openclaw)
  */
 const AGENT_LOGO_PATH_MAP = {
-  aionrs: 'brand/aion.svg',
+  aionrs: CENTAURAI_AGENT_LOGO,
   claude: 'ai-major/claude.svg',
   gemini: 'ai-major/gemini.svg',
   qwen: 'ai-china/qwen.svg',
@@ -48,7 +70,12 @@ const OPEN_CODE_LIGHT_FILE_NAME = 'opencode-light.svg';
 const OPEN_CODE_DARK_FILE_NAME = 'opencode-dark.svg';
 
 function buildAssetUrl(path: string): string {
+  if (/^data:/i.test(path)) return path;
   return resolveBackendAssetUrl(`/api/assets/logos/${path}`) ?? `/api/assets/logos/${path}`;
+}
+
+function isLegacyAionLogoUrl(logo: string): boolean {
+  return /\/api\/assets\/logos\/brand\/aion\.svg(?:[?#].*)?$/i.test(logo);
 }
 
 function applyThemeVariant(logo: string): string {
@@ -58,6 +85,7 @@ function applyThemeVariant(logo: string): string {
 }
 
 function normalizeLogoUrl(logo: string): string {
+  if (isLegacyAionLogoUrl(logo)) return CENTAURAI_AGENT_LOGO;
   return applyThemeVariant(resolveBackendAssetUrl(logo) ?? logo);
 }
 

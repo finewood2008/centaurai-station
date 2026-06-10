@@ -7,6 +7,7 @@
 import type { IChannelPairingRequest, IChannelPluginStatus, IChannelUser } from '@/common/types/channel/channel';
 import { channel } from '@/common/adapter/ipcBridge';
 import { getAgents } from '@/renderer/hooks/agent/useAgents';
+import { getAgentDisplayName } from '@/renderer/utils/model/agentTypes';
 import { configService } from '@/common/config/configService';
 import GoogleModelSelector from '@/renderer/pages/conversation/platforms/gemini/GoogleModelSelector';
 import type { GoogleModelSelection } from '@/renderer/pages/conversation/platforms/gemini/useGoogleModelSelection';
@@ -131,7 +132,7 @@ const TelegramConfigForm: React.FC<TelegramConfigFormProps> = ({
           const list = agentsResp.filter(isSupportedNewConversationAgent).map((a) => ({
             agent_type: a.agent_type,
             backend: a.backend,
-            name: a.name,
+            name: getAgentDisplayName({ agent_type: a.agent_type, backend: a.backend, name: a.name }),
             id: a.id,
           }));
           setAvailableAgents(list);
@@ -150,7 +151,7 @@ const TelegramConfigForm: React.FC<TelegramConfigFormProps> = ({
               // `id`. Accept either so switching across builds doesn't
               // silently drop the user's agent pick.
               id: (s.id as string | undefined) ?? (s.custom_agent_id as string | undefined),
-              name: s.name as string | undefined,
+              name: getAgentDisplayName({ agent_type: agentType, backend, name: s.name as string | undefined }),
             });
           }
         } else if (typeof saved === 'string') {
@@ -159,7 +160,10 @@ const TelegramConfigForm: React.FC<TelegramConfigFormProps> = ({
           // vendor labels remain in `backend`.
           const normalized = normalizeSupportedAgentSelection(undefined, saved);
           if (normalized) {
-            setSelectedAgent(normalized);
+            setSelectedAgent({
+              ...normalized,
+              name: getAgentDisplayName(normalized),
+            });
           }
         }
       } catch (error) {
@@ -345,7 +349,7 @@ const TelegramConfigForm: React.FC<TelegramConfigFormProps> = ({
     backend?: string;
     name: string;
     id?: string;
-  }> = availableAgents.length > 0 ? availableAgents : [{ agent_type: 'aionrs', name: 'Aion CLI' }];
+  }> = availableAgents.length > 0 ? availableAgents : [{ agent_type: 'aionrs', name: '直连CLI' }];
 
   return (
     <div className='flex flex-col gap-24px'>
@@ -486,7 +490,7 @@ const TelegramConfigForm: React.FC<TelegramConfigFormProps> = ({
                         ? `${selectedAgent.agent_type}|${selectedAgent.id}`
                         : selectedAgent.backend || selectedAgent.agent_type)
                   )?.name ||
-                  selectedAgent.agent_type}
+                  getAgentDisplayName(selectedAgent)}
               </span>
               <Down theme='outline' size={14} />
             </Button>

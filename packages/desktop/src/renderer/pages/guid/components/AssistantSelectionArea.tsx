@@ -10,6 +10,8 @@ import AssistantEditDrawer from '@/renderer/pages/settings/AssistantSettings/Ass
 import DeleteAssistantModal from '@/renderer/pages/settings/AssistantSettings/DeleteAssistantModal';
 import SkillConfirmModals from '@/renderer/pages/settings/AssistantSettings/SkillConfirmModals';
 import { resolveAvatarImageSrc } from '@/renderer/pages/settings/AssistantSettings/assistantUtils';
+import { normalizeBrandText } from '@/renderer/utils/brandText';
+import { assistantSkills, prettifySkill, skillIcon } from './assistantPresentation';
 import { CUSTOM_AVATAR_IMAGE_MAP } from '../constants';
 import styles from '../index.module.css';
 import type { AvailableAgent, EffectiveAgentInfo } from '../types';
@@ -37,7 +39,13 @@ type AssistantSelectionAreaProps = {
   onSetInput: (text: string) => void;
   onFocusInput: () => void;
   onRegisterOpenDetails?: (openDetails: (() => void) | null) => void;
+  /** When true, the default-state assistant grid is not rendered (the right-side
+   *  AssistantRail shows the list instead); only modals stay mounted. */
+  railMode?: boolean;
 };
+
+/** Max capability chips on the assistant page before a "+N" overflow chip. */
+const MAX_PRESET_SKILLS = 12;
 
 const resolveAssistantCandidateIds = (assistantId: string): string[] => {
   const stripped = assistantId.replace(/^builtin-/, '');
@@ -55,6 +63,7 @@ const AssistantSelectionArea: React.FC<AssistantSelectionAreaProps> = ({
   onSetInput,
   onFocusInput,
   onRegisterOpenDetails,
+  railMode,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -203,7 +212,12 @@ const AssistantSelectionArea: React.FC<AssistantSelectionAreaProps> = ({
   if (!assistants || assistants.length === 0) return null;
 
   if (is_presetAgent && selectedAgentInfo) {
-    // Selected Assistant View
+    // Selected Assistant View — a richer intro: core-capability chips sourced
+    // from the assistant's skills, followed by its example prompts.
+    const selectedAssistantRecord = assistants.find((a) => a.id === selectedAgentInfo.custom_agent_id);
+    const presetSkills = selectedAssistantRecord ? assistantSkills(selectedAssistantRecord) : [];
+    const shownSkills = presetSkills.slice(0, MAX_PRESET_SKILLS);
+    const skillOverflow = presetSkills.length - shownSkills.length;
     return (
       <div className='mt-20px w-full'>
         <div className='flex flex-col w-full animate-fade-in'>
@@ -230,9 +244,29 @@ const AssistantSelectionArea: React.FC<AssistantSelectionAreaProps> = ({
               </span>
             </div>
           )}
+          {/* Core Capabilities Section */}
+          {shownSkills.length > 0 && (
+            <div className='mt-16px'>
+              <div className={styles.assistantPromptHint}>
+                {t('guid.coreCapabilities', { defaultValue: 'Core capabilities' })}
+              </div>
+              <div className='flex flex-wrap gap-8px mt-12px'>
+                {shownSkills.map((skill) => {
+                  const Icon = skillIcon(skill);
+                  return (
+                    <span key={skill} className={styles.capabilityChip} title={skill}>
+                      <Icon size={13} theme='outline' />
+                      {prettifySkill(skill)}
+                    </span>
+                  );
+                })}
+                {skillOverflow > 0 && <span className={styles.capabilityChip}>+{skillOverflow}</span>}
+              </div>
+            </div>
+          )}
           {/* Prompts Section */}
           {(() => {
-            const agent = assistants.find((a) => a.id === selectedAgentInfo.custom_agent_id);
+            const agent = selectedAssistantRecord;
             const prompts = agent?.prompts_i18n?.[localeKey] || agent?.prompts_i18n?.['en-US'] || agent?.prompts;
             if (prompts && prompts.length > 0) {
               return (
@@ -265,7 +299,10 @@ const AssistantSelectionArea: React.FC<AssistantSelectionAreaProps> = ({
     );
   }
 
-  // Assistant List View
+  // Assistant List View — in rail mode the right-side AssistantRail renders the
+  // list, so here we only keep the modals mounted.
+  if (railMode) return <>{modalTree}</>;
+
   return (
     <div className='mt-32px w-full'>
       <div className={`${styles.assistantPromptHint} text-center mb-12px`}>
@@ -292,11 +329,12 @@ const AssistantSelectionArea: React.FC<AssistantSelectionAreaProps> = ({
                 avatarImage &&
                 (/\.(svg|png|jpe?g|webp|gif)$/i.test(avatarImage) || /^(https?:|file:\/\/|data:|\/)/i.test(avatarImage))
               );
-              const description =
+              const description = normalizeBrandText(
                 assistant.description_i18n?.[localeKey] ||
-                assistant.description_i18n?.['en-US'] ||
-                assistant.description ||
-                '';
+                  assistant.description_i18n?.['en-US'] ||
+                  assistant.description ||
+                  ''
+              );
               return (
                 <div
                   key={assistant.id}

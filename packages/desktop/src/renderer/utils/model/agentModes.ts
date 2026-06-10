@@ -96,6 +96,33 @@ export function getAgentModes(backend: string | undefined): AgentModeOption[] {
 }
 
 /**
+ * Preferred default mode per backend for a fresh conversation when the user
+ * has not saved an explicit mode preference. This only sets the initial value —
+ * any saved preference (including YOLO/bypassPermissions) still takes priority.
+ *
+ * Claude defaults to `acceptEdits` (auto-approve file edits, still prompt for
+ * commands) so users aren't clicking "allow" on every edit, while keeping the
+ * riskier YOLO mode opt-in.
+ */
+const DEFAULT_AGENT_MODE: Record<string, string> = {
+  claude: 'acceptEdits',
+};
+
+/**
+ * Get the default mode for a backend's fresh conversations.
+ * Returns undefined when there is no override or the override is not a valid
+ * mode for the backend (so callers fall back to their existing logic).
+ *
+ * @param backend - Agent backend type
+ */
+export function getDefaultAgentMode(backend: string | undefined): string | undefined {
+  if (!backend) return undefined;
+  const candidate = DEFAULT_AGENT_MODE[backend];
+  if (!candidate) return undefined;
+  return getAgentModes(backend).some((mode) => mode.value === candidate) ? candidate : undefined;
+}
+
+/**
  * Convert a snake_case mode value to a title-cased label.
  * e.g. 'auto_edit' -> 'Auto Edit', 'plan' -> 'Plan'
  */

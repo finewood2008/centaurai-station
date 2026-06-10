@@ -7,6 +7,7 @@
 import type { IChannelPairingRequest, IChannelPluginStatus, IChannelUser } from '@/common/types/channel/channel';
 import { channel } from '@/common/adapter/ipcBridge';
 import { getAgents } from '@/renderer/hooks/agent/useAgents';
+import { getAgentDisplayName } from '@/renderer/utils/model/agentTypes';
 import { configService } from '@/common/config/configService';
 import { openExternalUrl } from '@/renderer/utils/platform';
 import GoogleModelSelector from '@/renderer/pages/conversation/platforms/gemini/GoogleModelSelector';
@@ -61,7 +62,7 @@ interface DingTalkConfigFormProps {
   onStatusChange: (status: IChannelPluginStatus | null) => void;
 }
 
-const DINGTALK_DEV_DOCS_URL = 'https://github.com/iOfficeAI/AionUi/wiki/DingTalk-Bot-Setup-Guide';
+const DINGTALK_DEV_DOCS_URL = 'https://github.com/iOfficeAI/CentaurAI/wiki/DingTalk-Bot-Setup-Guide';
 
 const DingTalkConfigForm: React.FC<DingTalkConfigFormProps> = ({ pluginStatus, modelSelection, onStatusChange }) => {
   const { t } = useTranslation();
@@ -135,7 +136,7 @@ const DingTalkConfigForm: React.FC<DingTalkConfigFormProps> = ({ pluginStatus, m
           const list = agentsResp.filter(isSupportedNewConversationAgent).map((a) => ({
             agent_type: a.agent_type,
             backend: a.backend,
-            name: a.name,
+            name: getAgentDisplayName({ agent_type: a.agent_type, backend: a.backend, name: a.name }),
             id: a.id,
           }));
           setAvailableAgents(list);
@@ -153,14 +154,17 @@ const DingTalkConfigForm: React.FC<DingTalkConfigFormProps> = ({ pluginStatus, m
               ...normalized,
               // Legacy rows persist `custom_agent_id`; new rows write `id`.
               id: s.id ?? s.custom_agent_id,
-              name: s.name,
+              name: getAgentDisplayName({ ...normalized, name: s.name }),
             });
           }
         } else if (typeof saved === 'string') {
           const backend = saved as string;
           const normalized = normalizeSupportedAgentSelection(undefined, backend);
           if (normalized) {
-            setSelectedAgent(normalized);
+            setSelectedAgent({
+              ...normalized,
+              name: getAgentDisplayName(normalized),
+            });
           }
         }
       } catch (error) {
@@ -349,7 +353,7 @@ const DingTalkConfigForm: React.FC<DingTalkConfigFormProps> = ({ pluginStatus, m
     backend?: string;
     name: string;
     id?: string;
-  }> = availableAgents.length > 0 ? availableAgents : [{ agent_type: 'aionrs', name: 'Aion CLI' }];
+  }> = availableAgents.length > 0 ? availableAgents : [{ agent_type: 'aionrs', name: '直连CLI' }];
 
   return (
     <div className='flex flex-col gap-24px'>
@@ -558,7 +562,7 @@ const DingTalkConfigForm: React.FC<DingTalkConfigFormProps> = ({ pluginStatus, m
                         ? `${selectedAgent.agent_type}|${selectedAgent.id}`
                         : selectedAgent.backend || selectedAgent.agent_type)
                   )?.name ||
-                  selectedAgent.agent_type}
+                  getAgentDisplayName(selectedAgent)}
               </span>
               <Down theme='outline' size={14} />
             </Button>

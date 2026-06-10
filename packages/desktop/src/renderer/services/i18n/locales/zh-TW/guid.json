@@ -26,5 +26,9 @@
     "statusTesting": "Testing latency...",
     "statusUnreachable": "Unreachable",
     "statusAvailable": "Available"
-  }
+  },
+  "coreCapabilities": "核心能力",
+  "assistantsTitle": "助理",
+  "addAssistant": "添加助理",
+  "noAssistant": "不使用助理"
 }

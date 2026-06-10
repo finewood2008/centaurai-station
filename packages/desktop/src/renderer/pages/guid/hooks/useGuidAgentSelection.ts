@@ -17,7 +17,7 @@ import {
   type AgentMetadata,
   type AgentSource,
 } from '@/renderer/utils/model/agentTypes';
-import { getAgentModes } from '@/renderer/utils/model/agentModes';
+import { getAgentModes, getDefaultAgentMode } from '@/renderer/utils/model/agentModes';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
 import { savePreferredMode, savePreferredModelId, getAgentKey as getAgentKeyUtil } from './agentSelectionUtils';
@@ -30,6 +30,15 @@ export type GuidAgentSelectionResult = {
   selectedAgentKey: string;
   setSelectedAgentKey: (key: string) => void;
   defaultAgentKey: string;
+  /** Last selected non-preset CLI agent key — restored when leaving an assistant. */
+  lastCliAgentKey: string;
+  /**
+   * Session-scoped engine carried from the agent pill bar into an assistant
+   * selection. Overrides the assistant's stored `preset_agent_type` for
+   * display and conversation creation; cleared when leaving preset mode.
+   */
+  presetEngineOverride: string | null;
+  setPresetEngineOverride: (backend: string | null) => void;
   selectedAgent: string;
   selectedAgentInfo: AvailableAgent | undefined;
   is_presetAgent: boolean;
@@ -90,6 +99,11 @@ export type GuidAgentSelectionResult = {
 function resolveDefaultMode(backend: string | undefined, agents: AgentMetadata[] | undefined): string {
   if (!backend) return 'default';
 
+  // Product default for fresh state (e.g. claude → acceptEdits). Saved preferences
+  // are applied later in loadPreferredMode and still win over this.
+  const override = getDefaultAgentMode(backend);
+  if (override) return override;
+
   const matched = agents?.find((a) => (a.backend ?? a.agent_type) === backend);
   const handshakeModes = matched?.handshake?.available_modes as AcpSessionModes | undefined;
   if (handshakeModes) {
@@ -128,7 +142,10 @@ export const useGuidAgentSelection = ({
 }: UseGuidAgentSelectionOptions): GuidAgentSelectionResult => {
   const [selectedAgentKey, _setSelectedAgentKey] = useState<string>(() => {
     try {
-      return configService.get('guid.lastSelectedAgent') || 'aionrs';
+      const saved = configService.get('guid.lastSelectedAgent') || 'aionrs';
+      // Assistants are never restored across sessions — the default state is
+      // "no assistant" with the last-used CLI agent tab active.
+      return saved.startsWith('custom:') ? 'aionrs' : saved;
     } catch {
       return 'aionrs';
     }
@@ -140,11 +157,20 @@ export const useGuidAgentSelection = ({
   // Guard: only run the initial restore once; user selections are never overwritten
   const initialRestoreDoneRef = useRef(false);
   const [selectedAcpModel, _setSelectedAcpModel] = useState<string | null>(null);
+  const [presetEngineOverride, setPresetEngineOverride] = useState<string | null>(null);
+  const [lastCliAgentKey, setLastCliAgentKey] = useState<string>(() =>
+    selectedAgentKey.startsWith('custom:') ? 'aionrs' : selectedAgentKey
+  );
 
-  // Wrap setSelectedAgentKey to also save to storage
+  // Wrap setSelectedAgentKey to also save to storage. Only CLI agent keys are
+  // persisted (and tracked as `lastCliAgentKey`) — assistant (`custom:`) keys
+  // are session-only so a fresh launch always starts without an assistant.
   const setSelectedAgentKey = useCallback((key: string) => {
     initialRestoreDoneRef.current = true;
     _setSelectedAgentKey(key);
+    if (key.startsWith('custom:')) return;
+    setPresetEngineOverride(null);
+    setLastCliAgentKey(key);
     configService.set('guid.lastSelectedAgent', key).catch((error) => {
       console.error('Failed to save selected agent:', error);
     });
@@ -199,7 +225,7 @@ export const useGuidAgentSelection = ({
     resolvePresetAgentType,
     resolveEnabledSkills,
     resolveDisabledBuiltinSkills,
-  } = usePresetAssistantResolver({ assistants, localeKey });
+  } = usePresetAssistantResolver({ assistants, localeKey, presetEngineOverride });
 
   const { isMainAgentAvailable, getEffectiveAgentType } = useAgentAvailability({
     modelList,
@@ -224,9 +250,10 @@ export const useGuidAgentSelection = ({
       const assistantId = key.slice(7);
       const assistant = assistants.find((a) => a.id === assistantId);
       if (assistant) {
+        const engine = presetEngineOverride || assistant.preset_agent_type || 'gemini';
         return {
-          agent_type: assistant.preset_agent_type || 'gemini',
-          backend: assistant.preset_agent_type || 'gemini',
+          agent_type: engine,
+          backend: engine,
           name: assistant.name,
           id: assistant.id,
           custom_agent_id: assistant.id,
@@ -256,7 +283,7 @@ export const useGuidAgentSelection = ({
   })();
   const selectedAgentInfo = useMemo(() => {
     return findAgentByKey(selectedAgentKey);
-  }, [selectedAgentKey, availableAgents, assistants]);
+  }, [selectedAgentKey, availableAgents, assistants, presetEngineOverride]);
   const is_presetAgent = Boolean(selectedAgentInfo?.is_preset);
 
   // --- SWR: Fetch detected execution engines (shared cache) ---
@@ -350,13 +377,10 @@ export const useGuidAgentSelection = ({
         const savedKey = configService.get('guid.lastSelectedAgent');
         if (cancelled) return;
 
-        if (savedKey) {
-          // Preset assistant key — trust directly, assistants list resolves later
-          if (savedKey.startsWith('custom:')) {
-            _setSelectedAgentKey(savedKey);
-            return;
-          }
-          // Plain row key — verify it still exists in detected engines
+        if (savedKey && !savedKey.startsWith('custom:')) {
+          // Plain row key — verify it still exists in detected engines.
+          // Legacy `custom:` keys are ignored: assistants are session-only and
+          // the page always opens in the no-assistant state.
           if (availableAgents.some((agent) => getAgentKey(agent) === savedKey)) {
             _setSelectedAgentKey(savedKey);
             return;
@@ -517,6 +541,9 @@ export const useGuidAgentSelection = ({
     selectedAgentKey,
     setSelectedAgentKey,
     defaultAgentKey,
+    lastCliAgentKey,
+    presetEngineOverride,
+    setPresetEngineOverride,
     selectedAgent,
     selectedAgentInfo,
     is_presetAgent,

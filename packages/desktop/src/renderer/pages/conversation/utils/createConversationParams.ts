@@ -20,7 +20,7 @@ import {
 import type { AgentMetadata } from '@/renderer/utils/model/agentTypes';
 import { getAgents } from '@/renderer/hooks/agent/useAgents';
 import type { AcpModelInfo } from '@/common/types/platform/acpTypes';
-import { getAgentModes } from '@/renderer/utils/model/agentModes';
+import { getAgentModes, getDefaultAgentMode } from '@/renderer/utils/model/agentModes';
 import { hasSpecificModelCapability } from '@/renderer/utils/model/modelCapabilities';
 
 type ModePreference = {
@@ -60,7 +60,8 @@ async function resolvePreferredMode(backend: string): Promise<string | undefined
     return legacyMode;
   }
 
-  return undefined;
+  // No saved preference: fall back to the backend's product default (e.g. claude → acceptEdits).
+  return getDefaultAgentMode(backend);
 }
 
 async function resolvePreferredAcpModelId(backend: string): Promise<string | undefined> {
@@ -121,7 +122,7 @@ export async function getDefaultAionrsModel(): Promise<TProviderWithModel> {
 
   const compatibleProviders = providers.filter(isAionrsCompatibleProvider);
   if (compatibleProviders.length === 0) {
-    throw new Error('No enabled model provider for Aion CLI');
+    throw new Error('No enabled model provider for 直连CLI');
   }
 
   const savedDefault = configService.get('aionrs.defaultModel');

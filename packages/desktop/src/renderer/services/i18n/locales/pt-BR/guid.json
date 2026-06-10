@@ -26,5 +26,9 @@
     "statusTesting": "Testando latência...",
     "statusUnreachable": "Inacessível",
     "statusAvailable": "Disponível"
-  }
+  },
+  "coreCapabilities": "Core capabilities",
+  "assistantsTitle": "Assistants",
+  "addAssistant": "Add assistant",
+  "noAssistant": "Sem assistente"
 }

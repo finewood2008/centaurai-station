@@ -1,10 +1,10 @@
-appId: com.aionui.app
-productName: AionUi
-executableName: AionUi
-copyright: Copyright © 2024 AionUi
+appId: com.centaurai.app
+productName: CentaurAI
+executableName: CentaurAI
+copyright: Copyright © 2026 半人马人工智能（深圳）有限公司
 
 protocols:
-  - name: AionUi Protocol
+  - name: CentaurAI Protocol
     schemes:
       - aionui
 
@@ -172,15 +172,15 @@ linux:
   icon: resources/app.png
   artifactName: ${productName}-${version}-${os}-${arch}.${ext}
   category: Utility
-  maintainer: aionui
-  vendor: aionui
+  maintainer: centaurai
+  vendor: CentaurAI
   synopsis: ${description}
   description: ${description}
   desktop:
     entry:
-      Name: AionUi
+      Name: CentaurAI
       Comment: ${description}
-      Icon: aionui
+      Icon: centaurai
       Categories: Office;Utility;
       MimeType: x-scheme-handler/aionui;
 

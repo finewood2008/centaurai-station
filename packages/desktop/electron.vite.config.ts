@@ -55,6 +55,8 @@ function iconParkPlugin() {
 // Common path aliases for main process and workers
 const desktopSrcRoot = resolve('packages/desktop/src');
 const rendererRoot = resolve('packages/desktop/src/renderer');
+const devBackendPort = Number.parseInt(process.env.AIONUI_DEV_BACKEND_PORT ?? '51441', 10);
+const devBackendTarget = `http://127.0.0.1:${devBackendPort}`;
 
 const mainAliases = {
   '@': desktopSrcRoot,
@@ -187,11 +189,32 @@ export default defineConfig(({ mode }) => {
         // Vite auto-increments to the next available port.
         // electron-vite reads the actual port and sets ELECTRON_RENDERER_URL accordingly.
         port: 5173,
+        host: '127.0.0.1',
+        proxy: {
+          '/api': {
+            target: devBackendTarget,
+            changeOrigin: true,
+            ws: true,
+          },
+          '/login': {
+            target: devBackendTarget,
+            changeOrigin: true,
+          },
+          '/logout': {
+            target: devBackendTarget,
+            changeOrigin: true,
+          },
+          '/ws': {
+            target: devBackendTarget,
+            changeOrigin: true,
+            ws: true,
+          },
+        },
         // Explicit HMR host so Vite client connects directly to the Vite dev server,
         // not to the WebUI proxy server (which would reject the WebSocket and cause infinite reload).
         // Port is omitted so it automatically matches the server port.
         hmr: {
-          host: 'localhost',
+          host: '127.0.0.1',
         },
       },
       resolve: {

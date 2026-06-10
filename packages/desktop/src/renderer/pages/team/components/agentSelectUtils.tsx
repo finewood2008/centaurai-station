@@ -2,7 +2,7 @@ import React from 'react';
 import { Robot } from '@icon-park/react';
 import { getAgentLogo } from '@renderer/utils/model/agentLogo';
 import { CUSTOM_AVATAR_IMAGE_MAP } from '@renderer/pages/guid/constants';
-import type { AgentMetadata } from '@renderer/utils/model/agentTypes';
+import { getAgentDisplayName, type AgentMetadata } from '@renderer/utils/model/agentTypes';
 import type { Assistant } from '@/common/types/agent/assistantTypes';
 import { resolveBackendAssetUrl } from '@renderer/utils/platform';
 import {
@@ -33,7 +33,7 @@ export type TeamAgentOption = {
 export function cliAgentToOption(agent: AgentMetadata): TeamAgentOption {
   return {
     id: agent.id,
-    name: agent.name,
+    name: getAgentDisplayName(agent),
     backend: agent.backend || agent.agent_type,
     agent_type: agent.agent_type,
     icon: agent.icon,
@@ -73,6 +73,7 @@ export function resolveConversationType(backend: string): 'acp' | 'aionrs' {
 }
 
 export const AgentOptionLabel: React.FC<{ agent: TeamAgentOption }> = ({ agent }) => {
+  const displayName = getAgentDisplayName({ backend: agent.backend, name: agent.name });
   const logo = getAgentLogo(agent.backend);
   const avatarImage = agent.icon ? CUSTOM_AVATAR_IMAGE_MAP[agent.icon] : undefined;
   const directIcon =
@@ -85,17 +86,17 @@ export const AgentOptionLabel: React.FC<{ agent: TeamAgentOption }> = ({ agent }
   return (
     <div className='flex items-center gap-8px'>
       {avatarImage ? (
-        <img src={avatarImage} alt={agent.name} style={{ width: 16, height: 16, objectFit: 'contain' }} />
+        <img src={avatarImage} alt={displayName} style={{ width: 16, height: 16, objectFit: 'contain' }} />
       ) : isEmoji ? (
         <span style={{ fontSize: 14, lineHeight: '16px' }}>{agent.icon}</span>
       ) : directIcon ? (
-        <img src={directIcon} alt={agent.name} style={{ width: 16, height: 16, objectFit: 'contain' }} />
+        <img src={directIcon} alt={displayName} style={{ width: 16, height: 16, objectFit: 'contain' }} />
       ) : logo ? (
-        <img src={logo} alt={agent.name} style={{ width: 16, height: 16, objectFit: 'contain' }} />
+        <img src={logo} alt={displayName} style={{ width: 16, height: 16, objectFit: 'contain' }} />
       ) : (
         <Robot size='16' />
       )}
-      <span>{agent.name}</span>
+      <span>{displayName}</span>
     </div>
   );
 };

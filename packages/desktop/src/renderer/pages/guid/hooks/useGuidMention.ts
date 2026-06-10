@@ -5,6 +5,7 @@
  */
 
 import { resolveAgentLogo } from '@/renderer/utils/model/agentLogo';
+import { getAgentDisplayName } from '@/renderer/utils/model/agentTypes';
 import { CUSTOM_AVATAR_IMAGE_MAP } from '../constants';
 import type { AvailableAgent, MentionOption } from '../types';
 import { getAgentKey } from './agentSelectionUtils';
@@ -62,7 +63,7 @@ export const useGuidMention = ({
     const agents = availableAgents || [];
     return agents.map((agent) => {
       const key = getAgentKey(agent);
-      const label = agent.name || agent.backend || agent.agent_type;
+      const label = getAgentDisplayName(agent);
       const avatarValue = agent.custom_agent_id
         ? agent.avatar || customAgentAvatarMap.get(agent.custom_agent_id)
         : undefined;
@@ -127,7 +128,7 @@ export const useGuidMention = ({
     [stripMentionToken, setSelectedAgentKey, setInput]
   );
 
-  const selectedAgentLabel = selectedAgentInfo?.name || selectedAgentKey;
+  const selectedAgentLabel = getAgentDisplayName(selectedAgentInfo) || selectedAgentKey;
   const mentionMenuActiveOption = filteredMentionOptions[mentionActiveIndex] || filteredMentionOptions[0];
   const mentionMenuSelectedKey =
     mentionOpen || mentionSelectorOpen ? mentionMenuActiveOption?.key || selectedAgentKey : selectedAgentKey;

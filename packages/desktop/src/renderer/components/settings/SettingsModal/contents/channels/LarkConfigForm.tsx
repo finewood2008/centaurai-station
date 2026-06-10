@@ -7,6 +7,7 @@
 import type { IChannelPairingRequest, IChannelPluginStatus, IChannelUser } from '@/common/types/channel/channel';
 import { channel } from '@/common/adapter/ipcBridge';
 import { getAgents } from '@/renderer/hooks/agent/useAgents';
+import { getAgentDisplayName } from '@/renderer/utils/model/agentTypes';
 import { configService } from '@/common/config/configService';
 import { openExternalUrl } from '@/renderer/utils/platform';
 import GoogleModelSelector from '@/renderer/pages/conversation/platforms/gemini/GoogleModelSelector';
@@ -140,7 +141,7 @@ const LarkConfigForm: React.FC<LarkConfigFormProps> = ({ pluginStatus, modelSele
           const list = agentsResp.filter(isSupportedNewConversationAgent).map((a) => ({
             agent_type: a.agent_type,
             backend: a.backend,
-            name: a.name,
+            name: getAgentDisplayName({ agent_type: a.agent_type, backend: a.backend, name: a.name }),
             id: a.id,
           }));
           setAvailableAgents(list);
@@ -157,13 +158,16 @@ const LarkConfigForm: React.FC<LarkConfigFormProps> = ({ pluginStatus, modelSele
               ...normalized,
               // Legacy rows persist `custom_agent_id`; new rows write `id`.
               id: (s.id as string | undefined) ?? (s.custom_agent_id as string | undefined),
-              name: s.name as string | undefined,
+              name: getAgentDisplayName({ ...normalized, name: s.name as string | undefined }),
             });
           }
         } else if (typeof saved === 'string') {
           const normalized = normalizeSupportedAgentSelection(undefined, saved);
           if (normalized) {
-            setSelectedAgent(normalized);
+            setSelectedAgent({
+              ...normalized,
+              name: getAgentDisplayName(normalized),
+            });
           }
         }
       } catch (error) {
@@ -358,7 +362,7 @@ const LarkConfigForm: React.FC<LarkConfigFormProps> = ({ pluginStatus, modelSele
     backend?: string;
     name: string;
     id?: string;
-  }> = availableAgents.length > 0 ? availableAgents : [{ agent_type: 'aionrs', name: 'Aion CLI' }];
+  }> = availableAgents.length > 0 ? availableAgents : [{ agent_type: 'aionrs', name: '直连CLI' }];
 
   return (
     <div className='flex flex-col gap-24px'>
@@ -677,7 +681,7 @@ const LarkConfigForm: React.FC<LarkConfigFormProps> = ({ pluginStatus, modelSele
                         ? `${selectedAgent.agent_type}|${selectedAgent.id}`
                         : selectedAgent.backend || selectedAgent.agent_type)
                   )?.name ||
-                  selectedAgent.agent_type}
+                  getAgentDisplayName(selectedAgent)}
               </span>
               <Down theme='outline' size={14} />
             </Button>
