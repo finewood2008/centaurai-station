@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Lightning, Plus, Robot } from '@icon-park/react';
+import { DoubleLeft, DoubleRight, Lightning, Plus, Robot } from '@icon-park/react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,8 @@ type AssistantRailProps = {
   /** Pinned default option: chat directly without an assistant. */
   onSelectNone: () => void;
   onHover: (assistant: Assistant | null) => void;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
 };
 
 /**
@@ -34,9 +36,14 @@ export const AssistantRail: React.FC<AssistantRailProps> = ({
   onSelect,
   onSelectNone,
   onHover,
+  collapsed,
+  onToggleCollapsed,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const assistantsLabel = t('guid.assistantsTitle', { defaultValue: 'Assistants' });
+  const noAssistantLabel = t('guid.noAssistant', { defaultValue: 'No assistant' });
+  const addAssistantLabel = t('guid.addAssistant', { defaultValue: 'Add assistant' });
 
   const list = assistants
     .filter((a) => a.enabled !== false)
@@ -47,13 +54,40 @@ export const AssistantRail: React.FC<AssistantRailProps> = ({
     });
 
   return (
-    <div className={styles.assistantRail} onMouseLeave={() => onHover(null)}>
-      <div className={styles.assistantRailTitle}>{t('guid.assistantsTitle', { defaultValue: 'Assistants' })}</div>
+    <div
+      className={`${styles.assistantRail} ${collapsed ? styles.assistantRailCollapsedMode : ''}`}
+      onMouseLeave={() => onHover(null)}
+    >
+      <div className={styles.assistantRailHeader}>
+        <div className={styles.assistantRailTitle}>{assistantsLabel}</div>
+        <button
+          type='button'
+          className={styles.assistantRailToggle}
+          onClick={() => {
+            onHover(null);
+            onToggleCollapsed();
+          }}
+          aria-label={
+            collapsed
+              ? t('common.expand', { defaultValue: 'Expand' })
+              : t('common.collapse', { defaultValue: 'Collapse' })
+          }
+          title={
+            collapsed
+              ? t('common.expand', { defaultValue: 'Expand' })
+              : t('common.collapse', { defaultValue: 'Collapse' })
+          }
+        >
+          {collapsed ? <DoubleLeft theme='outline' size={16} /> : <DoubleRight theme='outline' size={16} />}
+        </button>
+      </div>
       <div className={styles.assistantRailList}>
         <button
           type='button'
           data-testid='assistant-rail-none'
           className={`${styles.assistantRailItem} ${!selectedAssistantId ? styles.assistantRailItemSelected : ''}`}
+          title={noAssistantLabel}
+          aria-label={noAssistantLabel}
           onMouseEnter={() => onHover(null)}
           onFocus={() => onHover(null)}
           onClick={onSelectNone}
@@ -61,7 +95,7 @@ export const AssistantRail: React.FC<AssistantRailProps> = ({
           <span className={styles.assistantRailAvatar}>
             <Lightning theme='outline' size={16} />
           </span>
-          <span className={styles.assistantRailName}>{t('guid.noAssistant', { defaultValue: 'No assistant' })}</span>
+          <span className={styles.assistantRailName}>{noAssistantLabel}</span>
         </button>
         {list.map((assistant) => {
           const avatar = resolveAssistantAvatar(assistant);
@@ -96,10 +130,11 @@ export const AssistantRail: React.FC<AssistantRailProps> = ({
           data-testid='assistant-rail-add'
           className={styles.assistantRailAdd}
           onClick={() => navigate('/settings/assistants')}
-          aria-label={t('guid.addAssistant', { defaultValue: 'Add assistant' })}
+          aria-label={addAssistantLabel}
+          title={addAssistantLabel}
         >
           <Plus theme='outline' size={16} />
-          <span className={styles.assistantRailName}>{t('guid.addAssistant', { defaultValue: 'Add assistant' })}</span>
+          <span className={styles.assistantRailName}>{addAssistantLabel}</span>
         </button>
       </div>
     </div>

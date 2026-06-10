@@ -42,6 +42,7 @@ const ALL_LEGACY_KEYS: ConfigKey[] = [
   'aionrs.config',
   'aionrs.defaultModel',
   'tools.imageGenerationModel',
+  'tools.imageGenerationModels',
   'tools.speechToText',
   'workspace.pasteConfirm',
   'upload.saveToWorkspace',

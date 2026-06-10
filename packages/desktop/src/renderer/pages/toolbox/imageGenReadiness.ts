@@ -14,7 +14,6 @@ export const IMAGE_MODEL_SETTINGS_ROUTE = '/settings/capabilities?tab=tools';
 export function isImageGenerationReady(): boolean {
   const model = configService.get('tools.imageGenerationModel');
   if (!model) return false;
-  if (model.switch === false) return false;
   return Boolean(model.id) && Boolean(model.use_model);
 }
 

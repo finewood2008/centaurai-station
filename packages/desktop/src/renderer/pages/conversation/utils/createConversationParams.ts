@@ -122,7 +122,7 @@ export async function getDefaultAionrsModel(): Promise<TProviderWithModel> {
 
   const compatibleProviders = providers.filter(isAionrsCompatibleProvider);
   if (compatibleProviders.length === 0) {
-    throw new Error('No enabled model provider for 直连CLI');
+    throw new Error('No enabled model provider for 直连模型');
   }
 
   const savedDefault = configService.get('aionrs.defaultModel');

@@ -35,6 +35,144 @@ const ARCO_MESSAGE_KEY_PATTERNS = [
 // 抑制第三方库中 React 19 ref 废弃警告（等待库更新）
 const REACT_19_REF_PATTERNS = ['accessing element.ref was removed in react 19', 'ref is now a regular prop'];
 
+const patchLegacyWebApis = () => {
+  const globalScope = globalThis as typeof globalThis & {
+    structuredClone?: <T>(value: T) => T;
+  };
+
+  if (typeof Object.hasOwn !== 'function') {
+    Object.defineProperty(Object, 'hasOwn', {
+      configurable: true,
+      writable: true,
+      value(object: object, key: PropertyKey) {
+        return Object.prototype.hasOwnProperty.call(object, key);
+      },
+    });
+  }
+
+  const defineAt = <T extends { at?: (index: number) => unknown; length: number; [key: number]: unknown }>(
+    proto: T
+  ) => {
+    if (typeof proto.at === 'function') {
+      return;
+    }
+
+    Object.defineProperty(proto, 'at', {
+      configurable: true,
+      writable: true,
+      value(index: number) {
+        const length = Number(this.length) || 0;
+        const normalizedIndex = Math.trunc(index) < 0 ? length + Math.trunc(index) : Math.trunc(index);
+        if (normalizedIndex < 0 || normalizedIndex >= length) {
+          return undefined;
+        }
+        return this[normalizedIndex];
+      },
+    });
+  };
+
+  defineAt(Array.prototype as Array<unknown> & { at?: (index: number) => unknown });
+  defineAt(String.prototype as unknown as { at?: (index: number) => unknown; length: number; [key: number]: unknown });
+
+  if (typeof globalScope.structuredClone !== 'function') {
+    globalScope.structuredClone = <T,>(value: T): T => {
+      if (value === null || typeof value !== 'object') {
+        return value;
+      }
+      if (value instanceof Date) {
+        return new Date(value.getTime()) as T;
+      }
+      if (value instanceof RegExp) {
+        return new RegExp(value.source, value.flags) as T;
+      }
+      if (Array.isArray(value)) {
+        return value.map((item) => globalScope.structuredClone?.(item)) as T;
+      }
+      if (value instanceof Map) {
+        return new Map(
+          Array.from(value.entries(), ([key, entry]) => [
+            globalScope.structuredClone?.(key),
+            globalScope.structuredClone?.(entry),
+          ])
+        ) as T;
+      }
+      if (value instanceof Set) {
+        return new Set(Array.from(value.values(), (entry) => globalScope.structuredClone?.(entry))) as T;
+      }
+      return Object.fromEntries(
+        Object.entries(value as Record<string, unknown>).map(([key, entry]) => [
+          key,
+          globalScope.structuredClone?.(entry),
+        ])
+      ) as T;
+    };
+  }
+};
+
+const patchArrayCopyMethods = () => {
+  // Older iPadOS Safari versions do not implement the ES2023 "change array by
+  // copy" methods. The app uses them in the login, sidebar, and homepage paths;
+  // missing methods cause a blank page before React can render.
+  const proto = Array.prototype as Array<unknown> & {
+    toReversed?: () => unknown[];
+    toSorted?: (compareFn?: (a: unknown, b: unknown) => number) => unknown[];
+    toSpliced?: (start: number, deleteCount?: number, ...items: unknown[]) => unknown[];
+    with?: (index: number, value: unknown) => unknown[];
+  };
+
+  if (typeof proto.toReversed !== 'function') {
+    Object.defineProperty(proto, 'toReversed', {
+      configurable: true,
+      writable: true,
+      value() {
+        return Array.from(this).reverse();
+      },
+    });
+  }
+
+  if (typeof proto.toSorted !== 'function') {
+    Object.defineProperty(proto, 'toSorted', {
+      configurable: true,
+      writable: true,
+      value(compareFn?: (a: unknown, b: unknown) => number) {
+        return Array.from(this).sort(compareFn);
+      },
+    });
+  }
+
+  if (typeof proto.toSpliced !== 'function') {
+    Object.defineProperty(proto, 'toSpliced', {
+      configurable: true,
+      writable: true,
+      value(start: number, deleteCount?: number, ...items: unknown[]) {
+        const copy = Array.from(this);
+        if (arguments.length === 1) {
+          copy.splice(start);
+        } else {
+          copy.splice(start, deleteCount ?? 0, ...items);
+        }
+        return copy;
+      },
+    });
+  }
+
+  if (typeof proto.with !== 'function') {
+    Object.defineProperty(proto, 'with', {
+      configurable: true,
+      writable: true,
+      value(index: number, value: unknown) {
+        const copy = Array.from(this);
+        const normalizedIndex = index < 0 ? copy.length + index : index;
+        if (normalizedIndex < 0 || normalizedIndex >= copy.length) {
+          throw new RangeError('Invalid index');
+        }
+        copy[normalizedIndex] = value;
+        return copy;
+      },
+    });
+  }
+};
+
 const extractMessage = (value: unknown): string | undefined => {
   if (!value) return undefined;
   if (typeof value === 'string') return value;
@@ -161,6 +299,8 @@ export const applyRuntimePatches = () => {
   if (typeof window === 'undefined') {
     return;
   }
+  patchLegacyWebApis();
+  patchArrayCopyMethods();
   patchGlobalErrorListeners();
   patchResizeObserver();
   patchGlobalErrorFilters();

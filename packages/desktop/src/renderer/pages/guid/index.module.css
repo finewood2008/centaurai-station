@@ -1,11 +1,12 @@
 .guidLayout {
   --assistant-surface-bg: color-mix(in srgb, var(--bg-2) 65%, transparent);
   --assistant-surface-bg-hover: color-mix(in srgb, var(--bg-2) 85%, transparent);
-  width: clamp(var(--app-min-width, 360px), calc(100% - 32px), 800px);
+  width: min(100%, 760px);
   max-width: 100%;
-  padding: 0 16px;
+  padding: 0;
   box-sizing: border-box;
   margin: 0 auto;
+  justify-self: center;
 }
 
 .heroHeader {
@@ -644,9 +645,8 @@
 /* 移动端优化 */
 @media (max-width: 768px) {
   .guidLayout {
-    width: clamp(var(--app-min-width, 360px), calc(100% - 24px), 100%);
-    padding: 0 12px;
-    padding-bottom: 100px; /* 为底部快捷按钮留出空间 */
+    width: min(100%, 100%);
+    padding: 0;
     box-sizing: border-box;
   }
 
@@ -700,8 +700,8 @@
 /* 小屏手机再收窄一点安全边距，提升可操作面积 */
 @media (max-width: 420px) {
   .guidLayout {
-    width: clamp(var(--app-min-width, 360px), calc(100% - 20px), 100%);
-    padding: 0 10px;
+    width: min(100%, 100%);
+    padding: 0;
   }
 }
 
@@ -710,15 +710,17 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  padding: 10px;
+  padding: 24px;
   position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* 整体内容块略往上移，减轻「重心偏下」的感觉 */
 .guidContainer .guidLayout {
-  margin-top: -5vh;
+  margin-top: -3vh;
 }
 
 /* Agent 选中时：先放大再回落至略大（pop 动效） */
@@ -742,17 +744,12 @@
   animation: agentSelectPop 0.4s ease-out forwards;
 }
 
-/* 底部快捷按钮：基础间距 + 安全区 */
-.guidQuickActions {
-  bottom: calc(32px + env(safe-area-inset-bottom, 0px));
-}
-
 @media (max-width: 768px) {
   .guidContainer {
     justify-content: flex-start;
     overflow-y: auto;
     overflow-x: hidden;
-    padding-top: 20px;
+    padding: 20px 14px 32px;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -1059,10 +1056,31 @@
    selector, capability card, assistant rail.
    ───────────────────────────────────────────────────────────── */
 
-/* Pass-through wrapper: the main column stays centered (its own styling),
-   the rail is pinned to the right edge of the page (absolute). */
+/* Homepage layout: keep the chat composer visually centered while the
+   assistant panel occupies a real column instead of covering the composer. */
 .guidTwoCol {
-  display: contents;
+  width: min(100%, 1080px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 760px) 176px;
+  column-gap: clamp(14px, 2vw, 24px);
+  align-items: center;
+  position: relative;
+}
+
+.guidTwoColCollapsed {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 760px) 48px;
+}
+
+.guidTwoColWithRail,
+.guidTwoColCollapsed {
+  min-height: min(76vh, 720px);
+}
+
+.guidTwoCol .guidLayout {
+  grid-column: 2;
+  width: 100%;
+  justify-self: stretch;
 }
 
 /* Minimal segmented agent selector */
@@ -1155,20 +1173,17 @@
 
 /* Capability card */
 .capabilityCardSlot {
-  width: 100%;
-  margin-bottom: 12px;
-  min-height: 150px;
-  position: relative;
-}
-/* The hover preview floats above the layout instead of pushing it — the slot
-   keeps a fixed height so the page never re-centers while browsing the rail. */
-.capabilityCardSlot .capabilityCard {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 5;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.12);
+  top: 50%;
+  right: calc(100% + 14px);
+  width: min(340px, calc(100vw - 520px));
+  min-width: 300px;
+  transform: translateY(-50%);
+  z-index: 6;
+  pointer-events: auto;
+}
+.capabilityCardSlot .capabilityCard {
+  box-shadow: 0 18px 46px rgba(18, 27, 42, 0.15);
 }
 .capabilityCard {
   width: 100%;
@@ -1327,78 +1342,161 @@
   background: #2f2f2f;
 }
 
-/* Assistant rail — pinned flush to the right edge of the page. */
+/* Assistant rail */
+.assistantRailDock {
+  grid-column: 3;
+  width: 176px;
+  align-self: center;
+  justify-self: end;
+  position: relative;
+  z-index: 4;
+}
+.guidTwoColCollapsed .assistantRailDock {
+  width: 48px;
+}
 .assistantRail {
-  position: absolute;
-  top: 50%;
-  right: 14px;
-  transform: translateY(-50%);
-  width: 264px;
+  width: 176px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-height: 86vh;
-  z-index: 2;
+  align-items: stretch;
+  gap: 6px;
+  max-height: min(72vh, 620px);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  box-sizing: border-box;
+}
+.assistantRailCollapsedMode {
+  width: 48px;
+  align-items: center;
+  padding: 0;
+}
+:global([data-theme='dark']) .assistantRail {
+  background: transparent;
+  box-shadow: none;
+}
+.assistantRailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 30px;
+  padding: 0 0 0 4px;
 }
 .assistantRailTitle {
-  font-size: 12px;
+  display: block;
+  min-width: 0;
   color: var(--text-secondary, var(--color-text-3));
-  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.assistantRailCollapsedMode .assistantRailHeader {
+  justify-content: center;
+  padding: 0;
+}
+.assistantRailCollapsedMode .assistantRailTitle {
+  display: none;
+}
+.assistantRailToggle,
+.assistantRailCollapsedButton,
+.assistantRailItem,
+.assistantRailAdd {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease;
+}
+.assistantRailToggle,
+.assistantRailCollapsedButton {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-3);
+}
+.assistantRailToggle:hover,
+.assistantRailCollapsedButton:hover {
+  background: var(--color-fill-2);
+  border-color: color-mix(in srgb, #ef760d 34%, var(--color-border-2));
+  color: var(--text-primary);
 }
 .assistantRailList {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: stretch;
+  gap: 8px;
   overflow-y: auto;
-  /* Horizontal slack so the hover transform (translateX(-6px) scale(1.05))
-     is not clipped by this scroll container. */
-  padding: 2px 14px;
-  margin: 0 -14px;
+  overflow-x: hidden;
+  width: 100%;
+  max-height: calc(min(72vh, 620px) - 50px);
+  padding: 0 2px 4px 0;
   scrollbar-width: thin;
+  box-sizing: border-box;
 }
 .assistantRailList::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 .assistantRailList::-webkit-scrollbar-thumb {
   background: var(--color-fill-3);
-  border-radius: 3px;
+  border-radius: 999px;
+}
+.assistantRailCollapsedMode .assistantRailList {
+  align-items: center;
+  overflow-x: visible;
+  width: 44px;
+  padding: 0 3px 4px;
+  scrollbar-width: none;
+}
+.assistantRailCollapsedMode .assistantRailList::-webkit-scrollbar {
+  display: none;
 }
 .assistantRailItem {
-  display: flex;
-  align-items: center;
-  gap: 10px;
   width: 100%;
-  padding: 9px 12px;
+  height: 38px;
+  min-height: 38px;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 8px;
   border: 1px solid transparent;
-  border-radius: 12px;
-  background: var(--assistant-surface-bg, var(--color-fill-1));
-  cursor: pointer;
+  background: transparent;
+  color: var(--text-secondary, var(--color-text-2));
   text-align: left;
-  transition:
-    transform 0.24s cubic-bezier(0.2, 0.85, 0.3, 1),
-    box-shadow 0.24s ease,
-    border-color 0.24s ease,
-    background 0.24s ease;
+  box-sizing: border-box;
 }
 .assistantRailItem:hover {
-  transform: translateX(-6px) scale(1.05);
+  transform: translateX(-2px);
   border-color: color-mix(in srgb, #ef760d 55%, transparent);
-  box-shadow: 0 8px 22px rgba(239, 118, 13, 0.16);
-  background: var(--bg-base, #fff);
+  box-shadow: 0 6px 16px rgba(239, 118, 13, 0.1);
+  background: color-mix(in srgb, var(--bg-base, #fff) 82%, transparent);
+  color: var(--text-primary);
   z-index: 1;
-}
-.assistantRailItem:hover .assistantRailName {
-  color: #ef760d;
 }
 :global([data-theme='dark']) .assistantRailItem:hover {
   background: #2a2a2a;
-  box-shadow: 0 8px 22px rgba(239, 118, 13, 0.22);
+  box-shadow: 0 6px 16px rgba(239, 118, 13, 0.18);
 }
 .assistantRailItemSelected {
-  border-color: color-mix(in srgb, #ef760d 50%, transparent);
+  border-color: color-mix(in srgb, #ef760d 62%, transparent);
+  background: color-mix(in srgb, #ef760d 12%, var(--bg-base, #fff));
 }
 .assistantRailItem:hover .assistantRailAvatar {
-  transform: scale(1.12);
+  transform: scale(1.1);
 }
 .assistantRailAvatar {
   width: 26px;
@@ -1410,7 +1508,7 @@
   justify-content: center;
   background: var(--color-fill-2);
   overflow: hidden;
-  transition: transform 0.24s cubic-bezier(0.2, 0.85, 0.3, 1);
+  transition: transform 0.2s cubic-bezier(0.2, 0.85, 0.3, 1);
 }
 .assistantRailAvatar img {
   width: 100%;
@@ -1422,56 +1520,211 @@
   line-height: 1;
 }
 .assistantRailName {
-  font-size: 13px;
+  position: static;
+  min-width: 0;
+  flex: 1;
   color: var(--text-primary);
-  /* Show full names — wrap up to two lines before truncating. */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  font-size: 12px;
+  line-height: 1.3;
+  white-space: nowrap;
   overflow: hidden;
-  word-break: break-word;
+  text-overflow: ellipsis;
+}
+.assistantRailCollapsedMode .assistantRailName {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 10px);
+  transform: translate(4px, -50%);
+  max-width: 220px;
+  padding: 6px 9px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--bg-base, #fff) 96%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border-2) 72%, transparent);
+  box-shadow: 0 10px 24px rgba(18, 27, 42, 0.12);
+  font-size: 12px;
+  line-height: 1.25;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.14s ease,
+    transform 0.14s ease,
+    visibility 0.14s ease;
+}
+:global([data-theme='dark']) .assistantRailCollapsedMode .assistantRailName {
+  background: color-mix(in srgb, #262626 96%, transparent);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+.assistantRailCollapsedMode .assistantRailItem:hover .assistantRailName,
+.assistantRailCollapsedMode .assistantRailItem:focus-visible .assistantRailName,
+.assistantRailCollapsedMode .assistantRailAdd:hover .assistantRailName,
+.assistantRailCollapsedMode .assistantRailAdd:focus-visible .assistantRailName {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(0, -50%);
 }
 .assistantRailAdd {
-  display: flex;
-  align-items: center;
-  gap: 10px;
   width: 100%;
-  padding: 9px 12px;
+  height: 38px;
+  min-height: 38px;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 8px;
   border: 1px dashed var(--color-border-2);
-  border-radius: 12px;
   background: transparent;
   color: var(--text-secondary, var(--color-text-3));
-  cursor: pointer;
-  transition:
-    transform 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease;
+  box-sizing: border-box;
 }
 .assistantRailAdd:hover {
-  transform: scale(1.04);
+  transform: translateX(-2px);
   border-color: #ef760d;
+  background: color-mix(in srgb, var(--color-fill-2) 82%, transparent);
   color: var(--text-primary);
 }
+.assistantRailCollapsedMode .assistantRailItem,
+.assistantRailCollapsedMode .assistantRailAdd {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  justify-content: center;
+  gap: 0;
+  padding: 0;
+}
 
-/* On narrow windows the absolutely-positioned rail would overlap the centered
-   input column — drop it back into the normal flow (centered, below the input)
-   and lay it out horizontally. */
-@media (max-width: 1400px) {
-  .assistantRail {
-    position: static;
+@media (max-width: 768px) {
+  .guidTwoCol,
+  .guidTwoColWithRail,
+  .guidTwoColCollapsed {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 156px;
+    column-gap: 8px;
+    align-items: center;
+    min-height: 0;
+  }
+
+  .guidTwoColCollapsed {
+    grid-template-columns: minmax(0, 1fr) 48px;
+  }
+
+  .guidTwoCol .guidLayout {
+    grid-column: 1;
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .assistantRailDock {
+    grid-column: 2;
+    position: relative;
+    right: auto;
+    top: auto;
     transform: none;
-    width: clamp(var(--app-min-width, 360px), calc(100% - 32px), 720px);
-    margin: 16px auto 0;
-    max-height: none;
+    width: 156px;
+    align-self: center;
+    justify-self: end;
+    z-index: 4;
   }
+
+  .guidTwoColCollapsed .assistantRailDock {
+    width: 48px;
+  }
+
+  .assistantRail {
+    width: 156px;
+    padding: 0;
+    border-radius: 0;
+    max-height: min(62vh, 460px);
+  }
+
+  .assistantRailCollapsedMode {
+    width: 48px;
+  }
+
   .assistantRailList {
-    flex-direction: row;
-    flex-wrap: wrap;
+    max-height: calc(min(62vh, 460px) - 48px);
   }
-  .assistantRailItem {
-    width: auto;
+
+  .assistantRailToggle,
+  .assistantRailCollapsedButton {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
   }
-  .assistantRailItem:hover {
-    transform: translateY(-4px) scale(1.05);
+
+  .assistantRailItem,
+  .assistantRailAdd {
+    height: 36px;
+    min-height: 36px;
+    padding: 0 6px;
+  }
+
+  .assistantRailCollapsedMode .assistantRailList {
+    width: 38px;
+  }
+
+  .assistantRailCollapsedMode .assistantRailItem,
+  .assistantRailCollapsedMode .assistantRailAdd {
+    width: 36px;
+    min-width: 36px;
+    flex: 0 0 36px;
+  }
+
+  .assistantRailAvatar {
+    width: 23px;
+    height: 23px;
+  }
+
+  .capabilityCardSlot {
+    display: none;
+  }
+}
+
+@media (max-width: 460px) {
+  .guidTwoCol,
+  .guidTwoColWithRail,
+  .guidTwoColCollapsed {
+    grid-template-columns: minmax(0, 1fr) 42px;
+    column-gap: 8px;
+  }
+
+  .assistantRailDock,
+  .assistantRail,
+  .assistantRailCollapsedMode {
+    width: 42px;
+  }
+
+  .assistantRail {
+    padding: 6px 4px;
+    border-radius: 15px;
+  }
+
+  .assistantRailList,
+  .assistantRailCollapsedMode .assistantRailList {
+    width: 34px;
+  }
+
+  .assistantRailToggle,
+  .assistantRailCollapsedButton,
+  .assistantRailItem,
+  .assistantRailAdd,
+  .assistantRailCollapsedMode .assistantRailItem,
+  .assistantRailCollapsedMode .assistantRailAdd {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    flex-basis: 32px;
+  }
+
+  .assistantRailTitle,
+  .assistantRailName {
+    display: none;
+  }
+
+  .assistantRailAvatar {
+    width: 22px;
+    height: 22px;
   }
 }

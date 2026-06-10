@@ -257,5 +257,5 @@
   },
   "imageModel": "Image model",
   "imageModelUnset": "Not configured",
-  "imageModelPlaceholder": "Select or type an image model"
+  "imageModelPlaceholder": "Select an image model"
 }

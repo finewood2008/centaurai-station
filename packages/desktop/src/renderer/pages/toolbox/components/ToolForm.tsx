@@ -9,13 +9,16 @@ import { Magic } from '@icon-park/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useConfigModelListWithImage from '@/renderer/hooks/agent/useConfigModelListWithImage';
+import { useConfig } from '@/renderer/hooks/config/useConfig';
 import { getAgentDisplayName, type AgentMetadata } from '@/renderer/utils/model/agentTypes';
+import { getImageModelValue } from '@/renderer/utils/model/imageGenerationModels';
 import { findMissingRequired } from '../toolboxPrompt';
-import { addImageModel, applyImageModelSelection, getCurrentImageModel, getImageModelOptions } from '../imageModel';
+import { applyImageModelSelection, getCurrentImageModelValue, getImageModelOptions } from '../imageModel';
 import type { ToolDef, ToolFormValues } from '../types';
 import { DynamicField } from './DynamicField';
 
 const Option = Select.Option;
+const OptGroup = Select.OptGroup;
 
 type ToolFormProps = {
   tool: ToolDef;
@@ -44,14 +47,25 @@ export const ToolForm: React.FC<ToolFormProps> = ({ tool, agents, running, disab
   // Image tools generate directly with the configured image model — no agent.
   const usesImageModel = tool.requires === 'image-model';
   const { modelListWithImage: imageProviders } = useConfigModelListWithImage();
-  const [imageModel, setImageModel] = useState<string>(() => getCurrentImageModel());
-  const imageModelOptions = useMemo(() => getImageModelOptions(imageProviders), [imageProviders]);
+  const [imageModelRegistry] = useConfig('tools.imageGenerationModels');
+  const [configuredImageModel] = useConfig('tools.imageGenerationModel');
+  const [imageModel, setImageModel] = useState<string>(() => getCurrentImageModelValue());
+  const imageModelOptions = useMemo(
+    () => getImageModelOptions(imageProviders, imageModelRegistry),
+    [imageModelRegistry, imageProviders]
+  );
 
   const handleImageModelChange = async (value: string) => {
     setImageModel(value);
-    // Newly typed (allowCreate) value → register it on the provider.
-    if (value && !imageModelOptions.includes(value)) await addImageModel(value);
   };
+
+  useEffect(() => {
+    const currentValue =
+      configuredImageModel?.id && configuredImageModel.use_model
+        ? getImageModelValue(configuredImageModel.id, configuredImageModel.use_model)
+        : '';
+    setImageModel(currentValue);
+  }, [configuredImageModel?.id, configuredImageModel?.use_model]);
 
   // Reset the form whenever the selected tool changes.
   useEffect(() => {
@@ -83,7 +97,7 @@ export const ToolForm: React.FC<ToolFormProps> = ({ tool, agents, running, disab
       return;
     }
     if (usesImageModel) {
-      if (imageModel) await applyImageModelSelection(imageModel);
+      if (imageModel) await applyImageModelSelection(imageModel, imageProviders);
       onRun(tool, null, values);
       return;
     }
@@ -109,15 +123,21 @@ export const ToolForm: React.FC<ToolFormProps> = ({ tool, agents, running, disab
           <Select
             value={imageModel || undefined}
             showSearch
-            allowCreate
             placeholder={t('toolbox.imageModelPlaceholder')}
             notFoundContent={t('toolbox.imageModelUnset')}
             onChange={(v) => void handleImageModelChange(v)}
           >
-            {imageModelOptions.map((m) => (
-              <Option key={m} value={m}>
-                {m}
-              </Option>
+            {imageModelOptions.map((provider) => (
+              <OptGroup label={provider.name} key={provider.id}>
+                {provider.models.map((modelName) => (
+                  <Option
+                    key={getImageModelValue(provider.id, modelName)}
+                    value={getImageModelValue(provider.id, modelName)}
+                  >
+                    {modelName}
+                  </Option>
+                ))}
+              </OptGroup>
             ))}
           </Select>
         </div>

@@ -9,18 +9,24 @@ import type { ConfigKeyMap } from '@/common/config/configKeys';
 import { removeImageGenerationEnvKeys, resolveImageGenerationMcpEnv } from '@/common/config/imageGenerationMcpEnv';
 import { mcpService } from '@/common/adapter/ipcBridge';
 import { type IMcpServer, BUILTIN_IMAGE_GEN_ID, BUILTIN_IMAGE_GEN_NAME } from '@/common/config/storage';
-import { isImageGenSupported } from '@/common/utils/imageModelAllowlist';
+import type { SpeechToTextConfig, SpeechToTextProvider } from '@/common/types/provider/speech';
 import { getAgents } from '@/renderer/hooks/agent/useAgents';
-import { Divider, Form, Tooltip, Message, Button, Dropdown, Menu, Modal, Switch } from '@arco-design/web-react';
+import { Divider, Form, Tooltip, Message, Button, Dropdown, Menu, Modal, Switch, Input } from '@arco-design/web-react';
 import { Help, Down, Plus } from '@icon-park/react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useConfigModelListWithImage from '@/renderer/hooks/agent/useConfigModelListWithImage';
+import { useConfig } from '@/renderer/hooks/config/useConfig';
 import AionScrollArea from '@/renderer/components/base/AionScrollArea';
 import AionSelect from '@/renderer/components/base/AionSelect';
 import AddMcpServerModal from '@/renderer/pages/settings/components/AddMcpServerModal';
 import McpServerItem from '@/renderer/pages/settings/ToolsSettings/McpServerItem';
 import { useMcpServers, useMcpConnection, useMcpModal, useMcpServerCRUD, useMcpOAuth } from '@/renderer/hooks/mcp';
+import {
+  buildImageGenerationModelProviders,
+  getImageModelValue,
+  parseImageModelValue,
+} from '@/renderer/utils/model/imageGenerationModels';
 import classNames from 'classnames';
 import { useSettingsViewMode } from '../settingsViewContext';
 
@@ -28,10 +34,196 @@ type MessageInstance = ReturnType<typeof Message.useMessage>[0];
 
 const isBuiltinImageGenServer = (server: IMcpServer) =>
   server.builtin === true && (server.id === BUILTIN_IMAGE_GEN_ID || server.name === BUILTIN_IMAGE_GEN_NAME);
+const SPEECH_TO_TEXT_CONFIG_CHANGED_EVENT = 'aionui:speech-to-text-config-changed';
 const areEnvRecordsEqual = (a: Record<string, string>, b: Record<string, string>) => {
   const aKeys = Object.keys(a);
   const bKeys = Object.keys(b);
   return aKeys.length === bKeys.length && aKeys.every((key) => a[key] === b[key]);
+};
+const DEFAULT_SPEECH_TO_TEXT_CONFIG: SpeechToTextConfig = {
+  enabled: false,
+  provider: 'openai',
+  openai: {
+    api_key: '',
+    base_url: '',
+    language: '',
+    model: 'whisper-1',
+  },
+  deepgram: {
+    api_key: '',
+    base_url: '',
+    detectLanguage: true,
+    language: '',
+    model: 'nova-2',
+    punctuate: true,
+    smartFormat: true,
+  },
+};
+
+const normalizeSpeechToTextConfig = (config?: SpeechToTextConfig): SpeechToTextConfig => ({
+  ...DEFAULT_SPEECH_TO_TEXT_CONFIG,
+  ...config,
+  openai: {
+    ...DEFAULT_SPEECH_TO_TEXT_CONFIG.openai,
+    ...config?.openai,
+  },
+  deepgram: {
+    ...DEFAULT_SPEECH_TO_TEXT_CONFIG.deepgram,
+    ...config?.deepgram,
+  },
+});
+
+const SpeechToTextSettingsSection: React.FC<{
+  config: SpeechToTextConfig;
+  onChange: (updater: (current: SpeechToTextConfig) => SpeechToTextConfig) => void;
+}> = ({ config, onChange }) => {
+  const { t } = useTranslation();
+  const renderSpeechToTextFieldLabel = useCallback(
+    (labelKey: string, requirement: 'required' | 'optional') => (
+      <span className='inline-flex items-center gap-6px'>
+        <span>{t(labelKey)}</span>
+        <span aria-hidden='true' className='text-12px text-t-tertiary'>
+          ({t(requirement === 'required' ? 'settings.speechToTextRequired' : 'settings.speechToTextOptional')})
+        </span>
+      </span>
+    ),
+    [t]
+  );
+
+  const handleProviderChange = useCallback(
+    (value: string) => {
+      onChange((current) => ({
+        ...current,
+        provider: value as SpeechToTextProvider,
+      }));
+    },
+    [onChange]
+  );
+
+  const handleOpenAIChange = useCallback(
+    (field: keyof NonNullable<SpeechToTextConfig['openai']>, value: string) => {
+      onChange((current) => ({
+        ...current,
+        openai: {
+          ...current.openai,
+          [field]: value,
+        },
+      }));
+    },
+    [onChange]
+  );
+
+  const handleDeepgramChange = useCallback(
+    (field: keyof NonNullable<SpeechToTextConfig['deepgram']>, value: string | boolean) => {
+      onChange((current) => ({
+        ...current,
+        deepgram: {
+          ...current.deepgram,
+          [field]: value,
+        },
+      }));
+    },
+    [onChange]
+  );
+
+  return (
+    <div className='px-[12px] md:px-[32px] py-[24px] bg-2 rd-12px md:rd-16px border border-border-2'>
+      <div className='flex items-center justify-between gap-12px mb-8px'>
+        <div className='flex flex-col gap-4px'>
+          <span className='text-14px text-t-primary'>{t('settings.speechToText')}</span>
+          <span className='text-13px text-t-secondary'>{t('settings.speechToTextDescription')}</span>
+        </div>
+        <Switch
+          checked={config.enabled}
+          onChange={(checked) => {
+            onChange((current) => ({
+              ...current,
+              enabled: checked,
+            }));
+          }}
+        />
+      </div>
+
+      {config.enabled && (
+        <>
+          <Divider className='mt-0px mb-20px' />
+
+          <Form layout='horizontal' labelAlign='left' className='space-y-12px'>
+            <Form.Item label={t('settings.speechToTextProvider')}>
+              <AionSelect value={config.provider} onChange={handleProviderChange}>
+                <AionSelect.Option value='openai'>{t('settings.speechToTextProviderOpenAI')}</AionSelect.Option>
+                <AionSelect.Option value='deepgram'>{t('settings.speechToTextProviderDeepgram')}</AionSelect.Option>
+              </AionSelect>
+            </Form.Item>
+
+            {config.provider === 'openai' ? (
+              <>
+                <Form.Item label={renderSpeechToTextFieldLabel('settings.speechToTextApiKey', 'required')}>
+                  <Input.Password
+                    value={config.openai?.api_key}
+                    visibilityToggle
+                    onChange={(value) => handleOpenAIChange('api_key', value)}
+                  />
+                </Form.Item>
+                <Form.Item label={renderSpeechToTextFieldLabel('settings.speechToTextBaseUrl', 'optional')}>
+                  <Input value={config.openai?.base_url} onChange={(value) => handleOpenAIChange('base_url', value)} />
+                </Form.Item>
+                <Form.Item label={renderSpeechToTextFieldLabel('settings.speechToTextModel', 'optional')}>
+                  <Input value={config.openai?.model} onChange={(value) => handleOpenAIChange('model', value)} />
+                </Form.Item>
+                <Form.Item label={renderSpeechToTextFieldLabel('settings.speechToTextLanguage', 'optional')}>
+                  <Input value={config.openai?.language} onChange={(value) => handleOpenAIChange('language', value)} />
+                </Form.Item>
+              </>
+            ) : (
+              <>
+                <Form.Item label={renderSpeechToTextFieldLabel('settings.speechToTextApiKey', 'required')}>
+                  <Input.Password
+                    value={config.deepgram?.api_key}
+                    visibilityToggle
+                    onChange={(value) => handleDeepgramChange('api_key', value)}
+                  />
+                </Form.Item>
+                <Form.Item label={renderSpeechToTextFieldLabel('settings.speechToTextBaseUrl', 'optional')}>
+                  <Input
+                    value={config.deepgram?.base_url}
+                    onChange={(value) => handleDeepgramChange('base_url', value)}
+                  />
+                </Form.Item>
+                <Form.Item label={renderSpeechToTextFieldLabel('settings.speechToTextModel', 'optional')}>
+                  <Input value={config.deepgram?.model} onChange={(value) => handleDeepgramChange('model', value)} />
+                </Form.Item>
+                <Form.Item label={renderSpeechToTextFieldLabel('settings.speechToTextLanguage', 'optional')}>
+                  <Input
+                    value={config.deepgram?.language}
+                    onChange={(value) => handleDeepgramChange('language', value)}
+                  />
+                </Form.Item>
+                <Form.Item label={renderSpeechToTextFieldLabel('settings.speechToTextDetectLanguage', 'optional')}>
+                  <Switch
+                    checked={config.deepgram?.detectLanguage !== false}
+                    onChange={(checked) => handleDeepgramChange('detectLanguage', checked)}
+                  />
+                </Form.Item>
+                <Form.Item label={renderSpeechToTextFieldLabel('settings.speechToTextPunctuate', 'optional')}>
+                  <Switch
+                    checked={config.deepgram?.punctuate !== false}
+                    onChange={(checked) => handleDeepgramChange('punctuate', checked)}
+                  />
+                </Form.Item>
+                <Form.Item label={renderSpeechToTextFieldLabel('settings.speechToTextSmartFormat', 'optional')}>
+                  <Switch
+                    checked={config.deepgram?.smartFormat !== false}
+                    onChange={(checked) => handleDeepgramChange('smartFormat', checked)}
+                  />
+                </Form.Item>
+              </>
+            )}
+          </Form>
+        </>
+      )}
+    </div>
+  );
 };
 const ModalMcpManagementSection: React.FC<{
   message: MessageInstance;
@@ -303,6 +495,8 @@ const ToolsModalContent: React.FC = () => {
   const [imageGenerationModel, setImageGenerationModel] = useState<
     ConfigKeyMap['tools.imageGenerationModel'] | undefined
   >();
+  const [imageModelRegistry] = useConfig('tools.imageGenerationModels');
+  const [speechToTextConfig, setSpeechToTextConfig] = useState<SpeechToTextConfig>(DEFAULT_SPEECH_TO_TEXT_CONFIG);
   const [isUpdatingImageGeneration, setIsUpdatingImageGeneration] = useState(false);
   const { modelListWithImage: data } = useConfigModelListWithImage();
   const { mcpServers, extensionMcpServers, saveMcpServers, setMcpServers, isMcpServersLoading } = useMcpServers();
@@ -310,28 +504,37 @@ const ToolsModalContent: React.FC = () => {
   const isImageGenerationServerLoading = isMcpServersLoading && !builtinImageGenServer;
 
   const imageGenerationModelList = useMemo(() => {
-    if (!data) return [];
-    return (data || [])
-      .map((provider) => ({
-        ...provider,
-        models: provider.models.filter((modelName) => isImageGenSupported(provider, modelName)),
-      }))
-      .filter((provider) => provider.models.length > 0);
-  }, [data]);
+    return buildImageGenerationModelProviders(data, imageModelRegistry, imageGenerationModel);
+  }, [data, imageGenerationModel, imageModelRegistry]);
 
   useEffect(() => {
     const loadConfigs = async () => {
       try {
         const storedModel = configService.get('tools.imageGenerationModel');
+        const storedSpeechToTextConfig = configService.get('tools.speechToText');
         if (storedModel) {
           setImageGenerationModel(storedModel);
         }
+        setSpeechToTextConfig(normalizeSpeechToTextConfig(storedSpeechToTextConfig));
       } catch (error) {
         console.error('Failed to load tools config:', error);
       }
     };
 
     void loadConfigs();
+  }, []);
+
+  const updateSpeechToTextConfig = useCallback((updater: (current: SpeechToTextConfig) => SpeechToTextConfig) => {
+    setSpeechToTextConfig((current) => {
+      const next = normalizeSpeechToTextConfig(updater(current));
+      configService.set('tools.speechToText', next).catch((error) => {
+        console.error('Failed to save speech-to-text config:', error);
+      });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent(SPEECH_TO_TEXT_CONFIG_CHANGED_EVENT));
+      }
+      return next;
+    });
   }, []);
 
   // Sync image generation model config to the built-in MCP server's transport.env
@@ -575,16 +778,17 @@ const ToolsModalContent: React.FC = () => {
                   <AionSelect
                     value={
                       imageGenerationModel?.id && imageGenerationModel?.use_model
-                        ? `${imageGenerationModel.id}|${imageGenerationModel.use_model}`
+                        ? getImageModelValue(imageGenerationModel.id, imageGenerationModel.use_model)
                         : undefined
                     }
                     onChange={(value) => {
-                      const [platformId, modelName] = value.split('|');
-                      const platform = imageGenerationModelList.find((p) => p.id === platformId);
+                      const parsed = parseImageModelValue(value);
+                      if (!parsed) return;
+                      const platform = imageGenerationModelList.find((p) => p.id === parsed.providerId);
                       if (platform) {
                         handleImageGenerationModelChange({
                           ...platform,
-                          use_model: modelName,
+                          use_model: parsed.modelName,
                         });
                       }
                     }}
@@ -592,7 +796,10 @@ const ToolsModalContent: React.FC = () => {
                     {imageGenerationModelList.map(({ models, ...platform }) => (
                       <AionSelect.OptGroup label={platform.name} key={platform.id}>
                         {models.map((modelName) => (
-                          <AionSelect.Option key={platform.id + modelName} value={platform.id + '|' + modelName}>
+                          <AionSelect.Option
+                            key={getImageModelValue(platform.id, modelName)}
+                            value={getImageModelValue(platform.id, modelName)}
+                          >
                             {modelName}
                           </AionSelect.Option>
                         ))}
@@ -633,6 +840,7 @@ const ToolsModalContent: React.FC = () => {
               </Form.Item>
             </Form>
           </div>
+          <SpeechToTextSettingsSection config={speechToTextConfig} onChange={updateSpeechToTextConfig} />
         </div>
       </AionScrollArea>
     </div>

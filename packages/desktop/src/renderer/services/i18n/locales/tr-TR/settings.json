@@ -210,7 +210,7 @@
   "deleteInvalidKeys": "Geçersiz Anahtarları Sil",
   "testAllKeys": "Tüm Anahtarları Test Et",
   "addModelPlaceholder": "Model ID seçin veya girin",
-  "customModelSupportNote": "Not: Şu anda yalnızca 直连CLI özel modelleri destekliyor.",
+  "customModelSupportNote": "Not: Şu anda yalnızca 直连模型 özel modelleri destekliyor.",
   "addModelHint": "Bir model ID seçin veya yazın, bu sağlayıcıya eklenecektir.",
   "addModelSelectedHint": "Model eklemeye hazır: {{model}}",
   "currentModelsLabel": "Mevcut Modeller",
@@ -904,7 +904,7 @@
   "agentManagement": {
     "localAgents": "Yerel Ajanlar",
     "remoteAgents": "Uzak Ajanlar",
-    "localAgentsDescription": "直连CLI yerleşik ajandır ve uygulamayla birlikte gelir, kurulum gerektirmez. Diğer ajanlar yalnızca ilgili CLI yerel olarak kurulduktan sonra algılanır.",
+    "localAgentsDescription": "直连模型 yerleşik ajandır ve uygulamayla birlikte gelir, kurulum gerektirmez. Diğer ajanlar yalnızca ilgili CLI yerel olarak kurulduktan sonra algılanır.",
     "localAgentsSetupLink": "Kurulum kılavuzu",
     "goToChat": "Sohbete Başla",
     "remoteAgentsDescription": "Şimdilik yalnızca OpenClaw uzak bağlantısı desteklenmektedir. Diğer ajanlar geliştirilmektedir.",

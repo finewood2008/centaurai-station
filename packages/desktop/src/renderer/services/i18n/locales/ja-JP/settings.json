@@ -210,7 +210,7 @@
   "deleteInvalidKeys": "無効なキーを削除",
   "testAllKeys": "すべてのキーをテスト",
   "addModelPlaceholder": "モデルIDを選択または入力してください",
-  "customModelSupportNote": "注: 現在カスタムモデルをサポートしているのは 直连CLI のみです。",
+  "customModelSupportNote": "注: 現在カスタムモデルをサポートしているのは 直连模型 のみです。",
   "addModelHint": "モデル ID を選択または入力すると、このプロバイダーの設定に追加されます。",
   "addModelSelectedHint": "追加予定のモデル: {{model}}",
   "currentModelsLabel": "現在のモデル",
@@ -906,7 +906,7 @@
   "agentManagement": {
     "localAgents": "ローカルエージェント",
     "remoteAgents": "リモートエージェント",
-    "localAgentsDescription": "直连CLI は組み込みエージェントで、アプリに同梱されインストール不要です。その他のエージェントは対応する CLI をローカルにインストールすると検出されます。",
+    "localAgentsDescription": "直连模型 は組み込みエージェントで、アプリに同梱されインストール不要です。その他のエージェントは対応する CLI をローカルにインストールすると検出されます。",
     "localAgentsSetupLink": "セットアップガイド",
     "goToChat": "チャットを開始",
     "remoteAgentsDescription": "現在は OpenClaw のリモート接続のみ対応しています。その他のエージェントは開発中です。",

@@ -104,8 +104,8 @@ export type AgentMetadata = {
 export function getAgentDisplayName(agent: { agent_type?: string; backend?: string; name?: string } | undefined): string {
   if (!agent) return '';
   const key = (agent.backend || agent.agent_type || '').toLowerCase();
-  if (key === 'aionrs' || key === 'aion-cli') return '直连CLI';
-  if (/^aion\s*cli$/i.test(agent.name || '') || /^aioncli$/i.test(agent.name || '')) return '直连CLI';
+  if (key === 'aionrs' || key === 'aion-cli') return '直连模型';
+  if (/^aion\s*cli$/i.test(agent.name || '') || /^aioncli$/i.test(agent.name || '')) return '直连模型';
   return agent.name || agent.backend || agent.agent_type || '';
 }
 

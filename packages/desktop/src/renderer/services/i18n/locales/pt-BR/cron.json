@@ -105,7 +105,7 @@
       "selectFolder": "Selecionar Pasta",
       "clearFolder": "Limpar",
       "model": "Modelo",
-      "aionrsModelRequired": "Por favor, selecione um modelo para a 直连CLI",
+      "aionrsModelRequired": "Por favor, selecione um modelo para a 直连模型",
       "aionrsNoProvider": "Nenhum modelo disponível"
     },
     "freq": {

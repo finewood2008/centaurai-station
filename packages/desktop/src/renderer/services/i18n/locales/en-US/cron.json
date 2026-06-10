@@ -105,7 +105,7 @@
       "selectFolder": "Select Folder",
       "clearFolder": "Clear",
       "model": "Model",
-      "aionrsModelRequired": "Please select a model for 直连CLI",
+      "aionrsModelRequired": "Please select a model for 直连模型",
       "aionrsNoProvider": "No available models"
     },
     "freq": {

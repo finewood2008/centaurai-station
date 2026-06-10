@@ -145,6 +145,14 @@ export async function startStaticServer(opts: StaticServerOptions): Promise<Stat
         return;
       }
 
+      const requestPath = (req.url.split('?')[0] || '/').split('#')[0];
+      const isHtmlEntry = requestPath === '/' || requestPath === '/index.html' || !requestPath.split('/').pop()?.includes('.');
+      if (isHtmlEntry || requestPath === '/sw.js') {
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      }
+
       // static files + SPA fallback
       await serveHandler(req, res, {
         public: opts.staticDir,

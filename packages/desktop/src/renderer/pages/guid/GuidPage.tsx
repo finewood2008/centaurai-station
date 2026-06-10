@@ -9,7 +9,7 @@ import type { IMcpServer } from '@/common/config/storage';
 import { resolveLocaleKey } from '@/common/utils';
 
 import { useInputFocusRing } from '@/renderer/hooks/chat/useInputFocusRing';
-import { openExternalUrl, resolveExtensionAssetUrl } from '@/renderer/utils/platform';
+import { resolveExtensionAssetUrl } from '@/renderer/utils/platform';
 import { CUSTOM_AVATAR_IMAGE_MAP } from './constants';
 import AssistantSelectionArea from './components/AssistantSelectionArea';
 import AssistantRail from './components/AssistantRail';
@@ -20,8 +20,6 @@ import GuidActionRow from './components/GuidActionRow';
 import GuidInputCard from './components/GuidInputCard';
 import GuidModelSelector from './components/GuidModelSelector';
 import MentionDropdown, { MentionSelectorBadge } from './components/MentionDropdown';
-import QuickActionButtons from './components/QuickActionButtons';
-import FeedbackReportModal from '@/renderer/components/settings/SettingsModal/contents/FeedbackReportModal';
 import { useGuidAgentSelection } from './hooks/useGuidAgentSelection';
 import { useGuidInput } from './hooks/useGuidInput';
 import { useGuidMention } from './hooks/useGuidMention';
@@ -53,17 +51,8 @@ const GuidPage: React.FC = () => {
   const { activeBorderColor, inactiveBorderColor, activeShadow } = useInputFocusRing();
 
   const localeKey = resolveLocaleKey(i18n.language);
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [hoveredAssistant, setHoveredAssistant] = useState<Assistant | null>(null);
-
-  // Open external link
-  const openLink = useCallback(async (url: string) => {
-    try {
-      await openExternalUrl(url);
-    } catch (error) {
-      console.error('Failed to open external link:', error);
-    }
-  }, []);
+  const [assistantRailCollapsed, setAssistantRailCollapsed] = useState(false);
 
   // --- Skills state ---
   // All available skills (builtin auto-injected + user-imported custom) merged
@@ -651,11 +640,18 @@ const GuidPage: React.FC = () => {
   // hover preview, so nothing renders in the slot until the user points at one.
   const capabilityAssistant = hoveredAssistant;
   const showAssistantRail = !agentSelection.is_presetAgent && (railAssistants?.length ?? 0) > 0;
+  const showExpandedAssistantRail = showAssistantRail && !assistantRailCollapsed;
 
   return (
     <ConfigProvider getPopupContainer={() => guidContainerRef.current || document.body}>
       <div ref={guidContainerRef} className={styles.guidContainer}>
-        <div className={showAssistantRail ? styles.guidTwoCol : ''}>
+        <div
+          className={
+            showAssistantRail
+              ? `${styles.guidTwoCol} ${showExpandedAssistantRail ? styles.guidTwoColWithRail : styles.guidTwoColCollapsed}`
+              : ''
+          }
+        >
           <div className={styles.guidLayout}>
             <div className={styles.heroHeader}>
               {agentSelection.is_presetAgent ? (
@@ -810,22 +806,6 @@ const GuidPage: React.FC = () => {
               />
             ) : null}
 
-            {showAssistantRail && (
-              <div className={styles.capabilityCardSlot}>
-                {capabilityAssistant && (
-                  <AssistantCapabilityCard
-                    assistant={capabilityAssistant}
-                    localeKey={localeKey}
-                    onHover={setHoveredAssistant}
-                    onUsePrompt={(prompt) => {
-                      guidInput.setInput(prompt);
-                      guidInput.handleTextareaFocus();
-                    }}
-                  />
-                )}
-              </div>
-            )}
-
             <GuidInputCard
               input={guidInput.input}
               onInputChange={handleInputChange}
@@ -876,24 +856,37 @@ const GuidPage: React.FC = () => {
             />
           </div>
           {showAssistantRail && (
-            <AssistantRail
-              assistants={railAssistants ?? []}
-              localeKey={localeKey}
-              selectedAssistantId={null}
-              onSelect={handleSelectAssistant}
-              onSelectNone={() => setHoveredAssistant(null)}
-              onHover={setHoveredAssistant}
-            />
+            <div className={styles.assistantRailDock} onMouseLeave={() => setHoveredAssistant(null)}>
+              {capabilityAssistant ? (
+                <div className={styles.capabilityCardSlot}>
+                  <AssistantCapabilityCard
+                    assistant={capabilityAssistant}
+                    localeKey={localeKey}
+                    onHover={setHoveredAssistant}
+                    onUsePrompt={(prompt) => {
+                      guidInput.setInput(prompt);
+                      guidInput.handleTextareaFocus();
+                    }}
+                  />
+                </div>
+              ) : null}
+              <AssistantRail
+                assistants={railAssistants ?? []}
+                localeKey={localeKey}
+                selectedAssistantId={null}
+                onSelect={handleSelectAssistant}
+                onSelectNone={() => setHoveredAssistant(null)}
+                onHover={setHoveredAssistant}
+                collapsed={assistantRailCollapsed}
+                onToggleCollapsed={() => {
+                  setHoveredAssistant(null);
+                  setAssistantRailCollapsed((value) => !value);
+                }}
+              />
+            </div>
           )}
         </div>
 
-        <QuickActionButtons
-          onOpenLink={openLink}
-          onOpenBugReport={() => setShowFeedbackModal(true)}
-          inactiveBorderColor={inactiveBorderColor}
-          activeShadow={activeShadow}
-        />
-        <FeedbackReportModal visible={showFeedbackModal} onCancel={() => setShowFeedbackModal(false)} />
       </div>
     </ConfigProvider>
   );

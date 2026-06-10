@@ -1,5 +1,5 @@
 {
-  "title": "常用AI工具箱",
+  "title": "AI工具箱",
   "subtitle": "常用实用的 AI 工具——填写表单即可生成。",
   "agent": "执行 Agent",
   "agentPlaceholder": "选择一个 Agent",
@@ -257,5 +257,5 @@
   },
   "imageModel": "图像模型",
   "imageModelUnset": "未配置",
-  "imageModelPlaceholder": "选择或输入图像模型"
+  "imageModelPlaceholder": "选择图像模型"
 }

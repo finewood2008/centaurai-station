@@ -83,6 +83,11 @@ export interface IConfigStorageRefer {
     /** @deprecated Image generation is now controlled via built-in MCP server toggle */
     switch?: boolean;
   };
+  /**
+   * Provider-specific image generation model names explicitly managed in the
+   * image-model section. These supplement name-based detection.
+   */
+  'tools.imageGenerationModels'?: Record<string, string[]>;
   'tools.speechToText'?: SpeechToTextConfig;
   // 是否在粘贴文件到工作区时询问确认（true = 不再询问）
   'workspace.pasteConfirm'?: boolean;

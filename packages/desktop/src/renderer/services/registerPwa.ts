@@ -9,6 +9,14 @@ import { isElectronDesktop } from '@renderer/utils/platform';
 const SERVICE_WORKER_URL = './sw.js';
 const LOCALHOST_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
 
+function isLocalhost(): boolean {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return false;
+  }
+
+  return LOCALHOST_HOSTS.has(window.location.hostname);
+}
+
 function isPwaRegistrationSupported(): boolean {
   if (typeof window === 'undefined' || typeof navigator === 'undefined') {
     return false;
@@ -19,16 +27,45 @@ function isPwaRegistrationSupported(): boolean {
   }
 
   const { protocol, hostname } = window.location;
-  const isHttpOrigin = protocol === 'http:' || protocol === 'https:';
-  if (!isHttpOrigin) {
+  if (protocol !== 'http:' && protocol !== 'https:') {
     return false;
   }
 
-  return window.isSecureContext || LOCALHOST_HOSTS.has(hostname);
+  // LAN WebUI is a live app, not an offline/mobile PWA. Keeping a service
+  // worker on iPad can replay stale bundles or force unexpected navigations.
+  // Only keep PWA support for localhost development and HTTPS deployments.
+  return protocol === 'https:' || LOCALHOST_HOSTS.has(hostname);
+}
+
+async function cleanupStalePwaState(): Promise<void> {
+  if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) {
+    return;
+  }
+
+  try {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+  } catch (error) {
+    console.warn('[PWA] Failed to unregister stale service workers:', error);
+  }
+
+  if (typeof caches === 'undefined') {
+    return;
+  }
+
+  try {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((key) => key.includes('aionui-webui')).map((key) => caches.delete(key)));
+  } catch (error) {
+    console.warn('[PWA] Failed to clear stale WebUI caches:', error);
+  }
 }
 
 export async function registerPwa(): Promise<ServiceWorkerRegistration | undefined> {
   if (!isPwaRegistrationSupported()) {
+    if (!isElectronDesktop() && !isLocalhost()) {
+      await cleanupStalePwaState();
+    }
     return undefined;
   }
 

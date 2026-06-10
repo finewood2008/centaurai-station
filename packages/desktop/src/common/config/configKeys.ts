@@ -47,6 +47,7 @@ export type ConfigKeyMap = {
   'aionrs.config': { preferredMode?: string } | undefined;
   'aionrs.defaultModel': { id: string; use_model: string } | undefined;
   'tools.imageGenerationModel': TProviderWithModel & { switch?: boolean };
+  'tools.imageGenerationModels': Record<string, string[]> | undefined;
   'tools.speechToText': SpeechToTextConfig | undefined;
   'workspace.pasteConfirm': boolean | undefined;
   'upload.saveToWorkspace': boolean | undefined;

@@ -118,7 +118,7 @@
       "selectFolder": "Klasör Seç",
       "clearFolder": "Temizle",
       "model": "Model",
-      "aionrsModelRequired": "直连CLI için bir model seçin",
+      "aionrsModelRequired": "直连模型 için bir model seçin",
       "aionrsNoProvider": "Kullanılabilir model yok"
     },
     "freq": {

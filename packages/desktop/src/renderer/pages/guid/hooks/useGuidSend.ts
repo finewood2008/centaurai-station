@@ -201,7 +201,7 @@ export const useGuidSend = (deps: GuidSendDeps): GuidSendResult => {
 
         await navigate(`/conversation/${conversation.id}`);
       } catch (error: unknown) {
-        console.error('Failed to create 直连CLI conversation:', error);
+        console.error('Failed to create 直连模型 conversation:', error);
         throw error;
       }
       return;
