@@ -48,7 +48,7 @@ export const AssistantRail: React.FC<AssistantRailProps> = ({
 
   return (
     <div className={styles.assistantRail} onMouseLeave={() => onHover(null)}>
-      <div className={styles.assistantRailTitle}>{t('guid.assistantsTitle', { defaultValue: '助理' })}</div>
+      <div className={styles.assistantRailTitle}>{t('guid.assistantsTitle', { defaultValue: 'Assistants' })}</div>
       <div className={styles.assistantRailList}>
         <button
           type='button'
@@ -61,7 +61,7 @@ export const AssistantRail: React.FC<AssistantRailProps> = ({
           <span className={styles.assistantRailAvatar}>
             <Lightning theme='outline' size={16} />
           </span>
-          <span className={styles.assistantRailName}>{t('guid.noAssistant', { defaultValue: '不使用助理' })}</span>
+          <span className={styles.assistantRailName}>{t('guid.noAssistant', { defaultValue: 'No assistant' })}</span>
         </button>
         {list.map((assistant) => {
           const avatar = resolveAssistantAvatar(assistant);
@@ -96,10 +96,10 @@ export const AssistantRail: React.FC<AssistantRailProps> = ({
           data-testid='assistant-rail-add'
           className={styles.assistantRailAdd}
           onClick={() => navigate('/settings/assistants')}
-          aria-label={t('guid.addAssistant', { defaultValue: '添加助理' })}
+          aria-label={t('guid.addAssistant', { defaultValue: 'Add assistant' })}
         >
           <Plus theme='outline' size={16} />
-          <span className={styles.assistantRailName}>{t('guid.addAssistant', { defaultValue: '添加助理' })}</span>
+          <span className={styles.assistantRailName}>{t('guid.addAssistant', { defaultValue: 'Add assistant' })}</span>
         </button>
       </div>
     </div>

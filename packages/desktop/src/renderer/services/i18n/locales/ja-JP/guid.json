@@ -27,8 +27,8 @@
     "statusUnreachable": "Unreachable",
     "statusAvailable": "Available"
   },
-  "coreCapabilities": "Core capabilities",
-  "assistantsTitle": "Assistants",
-  "addAssistant": "Add assistant",
+  "coreCapabilities": "主な機能",
+  "assistantsTitle": "アシスタント",
+  "addAssistant": "アシスタントを追加",
   "noAssistant": "アシスタントなし"
 }

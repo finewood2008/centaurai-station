@@ -27,8 +27,8 @@
     "statusUnreachable": "Недосяжний",
     "statusAvailable": "Доступний"
   },
-  "coreCapabilities": "Core capabilities",
-  "assistantsTitle": "Assistants",
-  "addAssistant": "Add assistant",
+  "coreCapabilities": "Ключові можливості",
+  "assistantsTitle": "Асистенти",
+  "addAssistant": "Додати асистента",
   "noAssistant": "Без асистента"
 }

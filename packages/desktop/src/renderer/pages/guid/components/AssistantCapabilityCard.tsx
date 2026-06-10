@@ -85,7 +85,7 @@ export const AssistantCapabilityCard: React.FC<AssistantCapabilityCardProps> = (
       {shown.length > 0 && (
         <div className={styles.capabilitySkills}>
           <span className={styles.capabilitySkillsLabel}>
-            {t('guid.coreCapabilities', { defaultValue: '核心能力' })}
+            {t('guid.coreCapabilities', { defaultValue: 'Core capabilities' })}
           </span>
           <div className={styles.capabilitySkillsWrap}>
             {shown.map((skill) => {

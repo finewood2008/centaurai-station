@@ -313,10 +313,16 @@ const GuidPage: React.FC = () => {
     (assistantId: string) => {
       // Carry the active agent tab into the assistant page: the engine chosen
       // on the welcome page stays in effect for the assistant's conversation.
+      // Only builtin ACP/aionrs engines can drive preset assistants — gateway
+      // (openclaw/nanobot), remote, and custom rows have dedicated conversation
+      // flows that the preset send path cannot wire up.
       if (!agentSelection.is_presetAgent) {
-        const carriedEngine = agentSelection.selectedAgentInfo?.backend || agentSelection.selectedAgentInfo?.agent_type;
-        agentSelection.setPresetEngineOverride(carriedEngine || null);
+        const info = agentSelection.selectedAgentInfo;
+        const canCarry =
+          info && (info.agent_type === 'acp' || info.agent_type === 'aionrs') && info.agent_source !== 'custom';
+        agentSelection.setPresetEngineOverride(canCarry ? info.backend || info.agent_type : null);
       }
+      setHoveredAssistant(null);
       agentSelection.setSelectedAgentKey(assistantId);
       mention.setMentionOpen(false);
       mention.setMentionQuery(null);
@@ -529,7 +535,12 @@ const GuidPage: React.FC = () => {
       // See commit 13858579d on main for the legacy single-store fix that this split already covers.
       const assistantId = agentSelection.selectedAgentInfo?.custom_agent_id;
       if (!assistantId || nextType === currentPresetAgentType) return;
+      const prevType = currentPresetAgentType;
       try {
+        // Apply the session override first — it wins over the stored
+        // preset_agent_type in every resolution path, so the switch is visible
+        // on the same frame as the click instead of after the roundtrip.
+        agentSelection.setPresetEngineOverride(nextType);
         // Optimistically patch the shared `assistants.list` SWR cache so the hero
         // avatar/logo reflect the new preset_agent_type on the same frame as the
         // click. Without this, downstream memos (selectedAssistantRecord →
@@ -542,15 +553,13 @@ const GuidPage: React.FC = () => {
           { revalidate: false }
         );
         await ipcBridge.assistants.update.invoke({ id: assistantId, preset_agent_type: nextType });
-        // Keep the session override in sync so the explicit switch is not
-        // masked by an engine carried over from the welcome page.
-        agentSelection.setPresetEngineOverride(nextType);
         await Promise.all([swrMutate('assistants.list'), agentSelection.refreshCustomAgents()]);
         const agent_name =
           getAgentDisplayName(agentSelection.availableAgents?.find((a) => (a.backend || a.agent_type) === nextType)) ||
           nextType;
         Message.success(t('guid.switchedToAgent', { agent: agent_name }));
       } catch (error) {
+        agentSelection.setPresetEngineOverride(prevType);
         console.error('[GuidPage] Failed to switch preset agent type:', error);
         Message.error(t('common.failed', { defaultValue: 'Failed' }));
       }

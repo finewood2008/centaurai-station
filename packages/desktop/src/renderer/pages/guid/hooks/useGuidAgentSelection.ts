@@ -336,6 +336,7 @@ export const useGuidAgentSelection = ({
         resetHandledRef.current = true;
         const key = getAgentKey(matched);
         _setSelectedAgentKey(key);
+        setLastCliAgentKey(key);
         configService.set('guid.lastSelectedAgent', key).catch((error) => {
           console.error('Failed to save preselected agent key:', error);
         });
@@ -353,6 +354,7 @@ export const useGuidAgentSelection = ({
         const firstCliAgent = availableAgents.find((a) => !a.is_preset);
         const fallbackKey = firstCliAgent ? getAgentKey(firstCliAgent) : 'aionrs';
         _setSelectedAgentKey(fallbackKey);
+        setLastCliAgentKey(fallbackKey);
         configService.set('guid.lastSelectedAgent', fallbackKey).catch((error) => {
           console.error('Failed to save reset agent key:', error);
         });
@@ -364,13 +366,16 @@ export const useGuidAgentSelection = ({
   useEffect(() => {
     if (!availableAgents || availableAgents.length === 0) return;
     if (resetAssistant) return;
+    // Run the restore at most once per mount: `availableAgents` changes
+    // identity on remote-agent merge and SWR revalidation, and re-running
+    // would silently overwrite an in-session (e.g. assistant) selection.
+    if (initialRestoreDoneRef.current) return;
     // An explicit pre-selection from navigation state wins over the
     // persisted last-selected key — skip the saved-restore path so
     // useLayoutEffect's preselect remains the authoritative pick.
     if (preselectAgentKey && availableAgents.some((a) => getAgentKey(a) === preselectAgentKey)) return;
 
     let cancelled = false;
-    initialRestoreDoneRef.current = true;
 
     const restoreSavedSelection = async () => {
       try {
@@ -382,15 +387,21 @@ export const useGuidAgentSelection = ({
           // Legacy `custom:` keys are ignored: assistants are session-only and
           // the page always opens in the no-assistant state.
           if (availableAgents.some((agent) => getAgentKey(agent) === savedKey)) {
+            initialRestoreDoneRef.current = true;
             _setSelectedAgentKey(savedKey);
+            setLastCliAgentKey(savedKey);
             return;
           }
         }
 
-        // No saved preference or stale key — default to first detected engine
+        // No saved preference (possibly config not hydrated yet) or stale key —
+        // tentatively default to the first detected engine, but leave the guard
+        // open so a later agents-list refresh can retry the saved restore.
         const firstAgent = availableAgents[0];
         if (firstAgent) {
-          _setSelectedAgentKey(getAgentKey(firstAgent));
+          const firstKey = getAgentKey(firstAgent);
+          _setSelectedAgentKey(firstKey);
+          setLastCliAgentKey(firstKey);
         }
       } catch (error) {
         console.error('Failed to load last selected agent:', error);

@@ -27,8 +27,8 @@
     "statusUnreachable": "Unreachable",
     "statusAvailable": "Available"
   },
-  "coreCapabilities": "Core capabilities",
-  "assistantsTitle": "Assistants",
-  "addAssistant": "Add assistant",
+  "coreCapabilities": "핵심 기능",
+  "assistantsTitle": "어시스턴트",
+  "addAssistant": "어시스턴트 추가",
   "noAssistant": "어시스턴트 사용 안 함"
 }

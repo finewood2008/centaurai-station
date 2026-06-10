@@ -27,8 +27,8 @@
     "statusUnreachable": "Недоступен",
     "statusAvailable": "Доступен"
   },
-  "coreCapabilities": "Core capabilities",
-  "assistantsTitle": "Assistants",
-  "addAssistant": "Add assistant",
+  "coreCapabilities": "Ключевые возможности",
+  "assistantsTitle": "Ассистенты",
+  "addAssistant": "Добавить ассистента",
   "noAssistant": "Без ассистента"
 }

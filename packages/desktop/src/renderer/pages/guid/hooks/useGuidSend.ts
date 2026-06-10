@@ -308,6 +308,7 @@ export const useGuidSend = (deps: GuidSendDeps): GuidSendResult => {
     resolveEnabledSkills,
     resolveDisabledBuiltinSkills,
     guidDisabledBuiltinSkills,
+    guidEnabledSkills,
     availableMcpServers,
     selectedMcpServerIds,
     navigate,

@@ -27,8 +27,8 @@
     "statusUnreachable": "Inacessível",
     "statusAvailable": "Disponível"
   },
-  "coreCapabilities": "Core capabilities",
-  "assistantsTitle": "Assistants",
-  "addAssistant": "Add assistant",
+  "coreCapabilities": "Principais capacidades",
+  "assistantsTitle": "Assistentes",
+  "addAssistant": "Adicionar assistente",
   "noAssistant": "Sem assistente"
 }
