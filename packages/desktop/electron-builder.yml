@@ -221,7 +221,7 @@ electronDownload:
 
 publish:
   provider: github
-  owner: iOfficeAI
-  repo: AionUi
+  owner: finewood2008
+  repo: centaurai-aionui
   publishAutoUpdate: true
   releaseType: release

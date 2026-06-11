@@ -23,13 +23,16 @@ mkdir -p "$OUTPUT_DIR"
 # 1) Copy all distributables (unique file names)
 # ---------------------------------------------------------------------------
 echo "==> Copying distributables from $ARTIFACTS_DIR ..."
-mapfile -t DISTRIBUTABLES < <(find "$ARTIFACTS_DIR" -type f \( \
+DISTRIBUTABLES=()
+while IFS= read -r file; do
+  DISTRIBUTABLES+=("$file")
+done < <(find "$ARTIFACTS_DIR" -type f \( \
   -name "*.exe" -o \
   -name "*.msi" -o \
   -name "*.dmg" -o \
   -name "*.deb" -o \
   -name "*.zip" \
-\) | sort)
+\) -print | sort)
 
 DUPLICATE_BASENAMES=$(for file in "${DISTRIBUTABLES[@]}"; do basename "$file"; done | sort | uniq -d || true)
 if [ -n "$DUPLICATE_BASENAMES" ]; then
@@ -46,10 +49,13 @@ done
 # 1b) Copy web-cli tarballs (+ sha256 checksums)
 # ---------------------------------------------------------------------------
 echo "==> Copying web-cli tarballs from $ARTIFACTS_DIR ..."
-mapfile -t WEB_CLI_FILES < <(find "$ARTIFACTS_DIR" -type f \( \
+WEB_CLI_FILES=()
+while IFS= read -r file; do
+  WEB_CLI_FILES+=("$file")
+done < <(find "$ARTIFACTS_DIR" -type f \( \
   -name "aionui-web-*.tar.gz" -o \
   -name "aionui-web-*.tar.gz.sha256" \
-\) | sort)
+\) -print | sort)
 
 WEB_CLI_DUPS=$(for file in "${WEB_CLI_FILES[@]}"; do basename "$file"; done | sort | uniq -d || true)
 if [ -n "$WEB_CLI_DUPS" ]; then

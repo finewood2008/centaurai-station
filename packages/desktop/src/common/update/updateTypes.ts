@@ -6,9 +6,9 @@
 
 export interface GitHubReleaseAsset {
   name: string;
-  /** Primary download URL — rewritten to CDN for faster download. */
+  /** Primary download URL from the CentaurAI GitHub release asset. */
   url: string;
-  /** Original GitHub download URL — used as fallback when CDN fails. */
+  /** Optional fallback URL tried when the primary URL fails. */
   fallbackUrl?: string;
   size: number;
   contentType?: string;
@@ -35,7 +35,7 @@ export interface UpdateCheckResult {
 
 export interface UpdateCheckRequest {
   includePrerelease?: boolean;
-  /** Defaults to iOfficeAI/AionUi when omitted */
+  /** Defaults to finewood2008/centaurai-aionui when omitted. */
   repo?: string;
 }
 
