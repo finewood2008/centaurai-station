@@ -218,12 +218,10 @@ const WeixinConfigForm: React.FC<WeixinConfigFormProps> = ({ pluginStatus, model
         }
         if (saved && typeof saved === 'object') {
           const s = saved as Record<string, unknown>;
+          const agentType = typeof s.agent_type === 'string' ? s.agent_type : undefined;
           const backend = typeof s.backend === 'string' ? s.backend : undefined;
 
-          const normalized = normalizeSupportedAgentSelection(
-            typeof s.agent_type === 'string' ? s.agent_type : undefined,
-            backend
-          );
+          const normalized = normalizeSupportedAgentSelection(agentType, backend);
           if (normalized) {
             setSelectedAgent({
               ...normalized,
