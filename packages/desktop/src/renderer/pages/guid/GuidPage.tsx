@@ -886,7 +886,6 @@ const GuidPage: React.FC = () => {
             </div>
           )}
         </div>
-
       </div>
     </ConfigProvider>
   );

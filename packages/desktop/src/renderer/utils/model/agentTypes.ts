@@ -101,7 +101,9 @@ export type AgentMetadata = {
   handshake?: AgentHandshake;
 };
 
-export function getAgentDisplayName(agent: { agent_type?: string; backend?: string; name?: string } | undefined): string {
+export function getAgentDisplayName(
+  agent: { agent_type?: string; backend?: string; name?: string } | undefined
+): string {
   if (!agent) return '';
   const key = (agent.backend || agent.agent_type || '').toLowerCase();
   if (key === 'aionrs' || key === 'aion-cli') return '直连模型';

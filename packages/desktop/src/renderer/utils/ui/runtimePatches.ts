@@ -75,7 +75,7 @@ const patchLegacyWebApis = () => {
   defineAt(String.prototype as unknown as { at?: (index: number) => unknown; length: number; [key: number]: unknown });
 
   if (typeof globalScope.structuredClone !== 'function') {
-    globalScope.structuredClone = <T,>(value: T): T => {
+    globalScope.structuredClone = <T>(value: T): T => {
       if (value === null || typeof value !== 'object') {
         return value;
       }
