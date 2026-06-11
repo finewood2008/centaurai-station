@@ -8,7 +8,7 @@ import { configService } from '@/common/config/configService';
 import type { ToolDef } from './types';
 
 /** Route to the settings page where the image generation model is configured. */
-export const IMAGE_MODEL_SETTINGS_ROUTE = '/settings/capabilities?tab=tools';
+export const IMAGE_MODEL_SETTINGS_ROUTE = '/settings/capabilities?tab=toolbox';
 
 /** Whether the image generation model has been configured by the user. */
 export function isImageGenerationReady(): boolean {

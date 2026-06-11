@@ -260,7 +260,8 @@
   "capabilities": "Recursos",
   "capabilitiesTab": {
     "skills": "Habilidades",
-    "tools": "Ferramentas"
+    "tools": "Ferramentas",
+    "toolbox": "Caixa de ferramentas"
   },
   "webui": "Remoto",
   "installed": "Instalado",

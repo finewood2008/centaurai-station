@@ -20,12 +20,14 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SkillsHubSettings from './SkillsHubSettings';
+import ToolboxSettings from './ToolboxSettings';
 import ToolsModalContent from '@/renderer/components/settings/SettingsModal/contents/ToolsModalContent';
 import SettingsPageWrapper from './components/SettingsPageWrapper';
 
-type CapabilitiesTab = 'skills' | 'tools';
+type CapabilitiesTab = 'skills' | 'tools' | 'toolbox';
 
-const isCapabilitiesTab = (value: string | null): value is CapabilitiesTab => value === 'skills' || value === 'tools';
+const isCapabilitiesTab = (value: string | null): value is CapabilitiesTab =>
+  value === 'skills' || value === 'tools' || value === 'toolbox';
 
 const CapabilitiesSettings: React.FC = () => {
   const { t } = useTranslation();
@@ -67,6 +69,9 @@ const CapabilitiesSettings: React.FC = () => {
         </Tabs.TabPane>
         <Tabs.TabPane key='tools' title={t('settings.capabilitiesTab.tools', { defaultValue: 'Tools' })}>
           <ToolsModalContent />
+        </Tabs.TabPane>
+        <Tabs.TabPane key='toolbox' title={t('settings.capabilitiesTab.toolbox', { defaultValue: 'Toolbox' })}>
+          <ToolboxSettings />
         </Tabs.TabPane>
       </Tabs>
     </SettingsPageWrapper>

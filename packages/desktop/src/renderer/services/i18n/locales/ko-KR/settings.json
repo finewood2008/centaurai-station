@@ -260,7 +260,8 @@
   "capabilities": "기능 확장",
   "capabilitiesTab": {
     "skills": "스킬",
-    "tools": "도구"
+    "tools": "도구",
+    "toolbox": "도구함"
   },
   "webui": "원격 연결",
   "installed": "설치됨",

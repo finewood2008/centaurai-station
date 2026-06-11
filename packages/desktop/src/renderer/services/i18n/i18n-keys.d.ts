@@ -1277,6 +1277,7 @@ export type I18nKey =
   | 'settings.cannotDeleteBuiltin'
   | 'settings.capabilities'
   | 'settings.capabilitiesTab.skills'
+  | 'settings.capabilitiesTab.toolbox'
   | 'settings.capabilitiesTab.tools'
   | 'settings.cdp.configFailed'
   | 'settings.cdp.configSaved'

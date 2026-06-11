@@ -260,7 +260,8 @@
   "capabilities": "Yetenekler",
   "capabilitiesTab": {
     "skills": "Beceriler",
-    "tools": "Araçlar"
+    "tools": "Araçlar",
+    "toolbox": "Araç Kutusu"
   },
   "webui": "Uzak Bağlantı",
   "installed": "Yüklü",

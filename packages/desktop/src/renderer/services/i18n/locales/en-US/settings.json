@@ -268,7 +268,8 @@
   "capabilities": "Capabilities",
   "capabilitiesTab": {
     "skills": "Skills",
-    "tools": "Tools"
+    "tools": "Tools",
+    "toolbox": "Toolbox"
   },
   "webui": "Remote",
   "installed": "Installed",

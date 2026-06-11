@@ -268,7 +268,8 @@
   "capabilities": "能力扩展",
   "capabilitiesTab": {
     "skills": "技能",
-    "tools": "工具"
+    "tools": "工具",
+    "toolbox": "工具箱"
   },
   "webui": "远程连接",
   "installed": "已安装",
