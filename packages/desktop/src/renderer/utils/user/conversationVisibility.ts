@@ -1,11 +1,13 @@
 import { ipcBridge } from '@/common';
 import type { TChatConversation } from '@/common/config/storage';
+import type { IChannelSession, IChannelUser } from '@/common/types/channel/channel';
 import { filterConversationsForCurrentUser, type ConversationVisibilityScope } from '@/common/utils/frontendUserScope';
+import { isElectronDesktop } from '@/renderer/utils/platform';
 
 export async function buildConversationVisibilityScope(): Promise<ConversationVisibilityScope> {
   const [channelUsers, channelSessions] = await Promise.all([
-    ipcBridge.channel.getAuthorizedUsers.invoke().catch(() => []),
-    ipcBridge.channel.getActiveSessions.invoke().catch(() => []),
+    ipcBridge.channel.getAuthorizedUsers.invoke().catch((): IChannelUser[] => []),
+    ipcBridge.channel.getActiveSessions.invoke().catch((): IChannelSession[] => []),
   ]);
   const visibleChannelUserIds = new Set(channelUsers.map((user) => user.id));
   const channelConversationUserIds = new Map<string, string>();
@@ -19,6 +21,9 @@ export async function buildConversationVisibilityScope(): Promise<ConversationVi
   return {
     channelConversationUserIds,
     visibleChannelUserIds,
+    // WebUI fetches conversations from a backend that already scopes them to the
+    // authenticated user; desktop runs as the shared admin user and does not.
+    backendScopedByUser: !isElectronDesktop(),
   };
 }
 

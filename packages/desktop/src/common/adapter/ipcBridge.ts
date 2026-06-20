@@ -90,8 +90,10 @@ import {
 import { fromBackendCompareResult, type RawCompareResult } from './fileSnapshotMapper';
 import {
   absoluteToRelativePath,
+  fromBackendDirOrFileList,
   fromBackendWorkspaceFlatFiles,
   fromBackendWorkspaceList,
+  type RawDirOrFile,
   type RawWorkspaceFlatFile,
 } from './workspaceMapper';
 import {
@@ -445,6 +447,12 @@ export const application = {
     })
   ),
   getPath: bridge.buildProvider<string, { name: 'desktop' | 'home' | 'downloads' }>('app.get-path'),
+  // Write a base64-decoded binary file to disk (Electron main has Node fs; the
+  // aioncore /api/fs/write is text-only). Used to save generated .docx etc.
+  saveBinaryFile: bridge.buildProvider<
+    IBridgeResponse<{ path: string }>,
+    { dir: string; fileName: string; base64: string }
+  >('app.save-binary-file'),
   // Electron-local: copies cache dir + persists to ProcessEnv, paired with restart.
   // The backend reads AIONUI_*_DIR env vars on boot, so it does not own this config.
   updateSystemInfo: bridge.buildProvider<void, { cacheDir: string; workDir: string }>('update-system-info'),
@@ -534,7 +542,10 @@ export const imageGen = {
 // ---------------------------------------------------------------------------
 
 export const fs = {
-  getFilesByDir: httpPost<Array<IDirOrFile>, { dir: string; root: string }>('/api/fs/dir'),
+  getFilesByDir: withResponseMap(
+    httpPost<Array<RawDirOrFile>, { dir: string; root: string }>('/api/fs/dir'),
+    fromBackendDirOrFileList
+  ),
   listWorkspaceFiles: withResponseMap(
     httpPost<Array<RawWorkspaceFlatFile>, { root: string }>('/api/fs/list'),
     fromBackendWorkspaceFlatFiles
@@ -1848,7 +1859,7 @@ async function readPersistedChannelBindings(): Promise<ChannelBindings> {
   const serverSettings = await httpRequest<unknown>(
     'GET',
     `/api/settings/client?key=${encodeURIComponent(CHANNEL_BINDINGS_STORAGE_KEY)}`
-  ).catch(() => undefined);
+  ).catch((): undefined => undefined);
   if (serverSettings !== undefined && serverSettings !== null) {
     const serverBindings = normalizeChannelBindings(serverSettings);
     writeLocalChannelBindings(serverBindings);
@@ -1892,12 +1903,12 @@ export const channel = {
     provider: () => {},
     invoke: async ({ code }: { code: string }): Promise<void> => {
       const [before, pairings] = await Promise.all([
-        httpRequest<RawUser[]>('GET', '/api/channel/users').catch(() => []),
-        httpRequest<RawPairing[]>('GET', '/api/channel/pairings').catch(() => []),
+        httpRequest<RawUser[]>('GET', '/api/channel/users').catch((): RawUser[] => []),
+        httpRequest<RawPairing[]>('GET', '/api/channel/pairings').catch((): RawPairing[] => []),
       ]);
       const approvedPairing = pairings.find((pairing) => pairing.code === code);
       await httpRequest<void>('POST', '/api/channel/pairings/approve', { code });
-      const after = await httpRequest<RawUser[]>('GET', '/api/channel/users').catch(() => []);
+      const after = await httpRequest<RawUser[]>('GET', '/api/channel/users').catch((): RawUser[] => []);
       const beforeIds = new Set(before.map((user) => user.id).filter((id): id is string => typeof id === 'string'));
       const newUserIds = after
         .map((user) => user.id)

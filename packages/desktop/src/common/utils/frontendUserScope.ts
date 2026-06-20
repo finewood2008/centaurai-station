@@ -11,6 +11,15 @@ export type ConversationVisibilityScope = {
   channelConversationUserIds?: Map<string, string>;
   visibleChannelUserIds?: Set<string>;
   channelBindings?: ChannelBindings;
+  /**
+   * True when the conversation list was fetched from a backend that already
+   * scopes `/api/conversations` to the authenticated user (the WebUI path).
+   * In that case every conversation returned belongs to the current user, so
+   * channel conversations (created backend-side without a frontend owner) must
+   * not be filtered out. Desktop runs as the shared admin user, so this is
+   * false there and the heuristic channel attribution below still applies.
+   */
+  backendScopedByUser?: boolean;
 };
 
 function readLocalStorage(key: string): string | null {
@@ -96,6 +105,16 @@ export function isConversationVisibleForCurrentUser(
     return ownerId === currentUserId;
   }
 
+  // WebUI: the backend already scoped `/api/conversations` to the authenticated
+  // user, so every conversation it returned belongs to the current user — even a
+  // regular (non-channel) chat created without a frontend owner marker. Trust
+  // that here instead of falling through to the admin-only heuristics below,
+  // otherwise a sub-user's own conversations (and the files generated in them)
+  // are wrongly hidden from their content hub.
+  if (scope?.backendScopedByUser) {
+    return true;
+  }
+
   const channelUserId = getChannelConversationUserId(conversation, scope);
   if (channelUserId) {
     if (scope?.visibleChannelUserIds) {
@@ -172,7 +191,10 @@ export function addChannelUserBindingForCurrentUser(bindings: ChannelBindings, c
   return next;
 }
 
-export function removeChannelUserBindingFromAllUsers(bindings: ChannelBindings, channelUserId: string): ChannelBindings {
+export function removeChannelUserBindingFromAllUsers(
+  bindings: ChannelBindings,
+  channelUserId: string
+): ChannelBindings {
   const next: ChannelBindings = {};
   Object.entries(bindings).forEach(([userId, userIds]) => {
     const remaining = userIds.filter((id) => id !== channelUserId);
@@ -199,7 +221,10 @@ export function removeChannelUserBinding(channelUserId: string): void {
   writeChannelBindings(removeChannelUserBindingFromAllUsers(readChannelBindings(), channelUserId));
 }
 
-function isChannelUserVisibleForCurrentUser(channelUserId: string, bindings: ChannelBindings = readChannelBindings()): boolean {
+function isChannelUserVisibleForCurrentUser(
+  channelUserId: string,
+  bindings: ChannelBindings = readChannelBindings()
+): boolean {
   const currentUserId = getCurrentFrontendUserId();
   const boundForCurrent = new Set(bindings[currentUserId] ?? []);
   const allBound = new Set(Object.values(bindings).flat());
