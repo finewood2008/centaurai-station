@@ -333,17 +333,18 @@ const ToolboxPage: React.FC<ToolboxPageProps> = ({ mode = 'toolbox' }) => {
   const textCount = visibleTools.filter((tool) => tool.category === 'text').length;
   const workbenchCount = visibleTools.filter((tool) => tool.category === 'workbench').length;
 
-  const allCategoryOptions: Array<{ key: ToolboxCategory; label: string; count: number }> = [
-    {
-      key: 'all',
-      label: t('toolbox.categories.all'),
-      count: isWorkbenchMode ? workbenchTools.length + 1 : visibleTools.length,
-    },
-    { key: 'image', label: t('toolbox.categories.image'), count: imageCount },
-    { key: 'text', label: t('toolbox.categories.text'), count: textCount },
-    { key: 'workbench', label: t('toolbox.categories.workbench'), count: workbenchCount },
-  ];
-  const categoryOptions = allCategoryOptions.filter((item) => item.key === 'all' || item.count > 0);
+  const categoryOptions: Array<{ key: ToolboxCategory; label: string; count: number }> = (
+    [
+      {
+        key: 'all',
+        label: t('toolbox.categories.all'),
+        count: isWorkbenchMode ? workbenchTools.length + 1 : visibleTools.length,
+      },
+      { key: 'image', label: t('toolbox.categories.image'), count: imageCount },
+      { key: 'text', label: t('toolbox.categories.text'), count: textCount },
+      { key: 'workbench', label: t('toolbox.categories.workbench'), count: workbenchCount },
+    ] as Array<{ key: ToolboxCategory; label: string; count: number }>
+  ).filter((item) => item.key === 'all' || item.count > 0);
 
   const statCards = isWorkbenchMode
     ? [

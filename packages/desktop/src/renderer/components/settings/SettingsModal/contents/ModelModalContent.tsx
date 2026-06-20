@@ -91,12 +91,8 @@ const ModelModalContent: React.FC = () => {
     );
     ipcBridge.mode.deleteProvider
       .invoke({ id })
-      .then(() => {
-        void mutate();
-      })
-      .catch(() => {
-        void mutate();
-      });
+      .then((): void => void mutate())
+      .catch((): void => void mutate());
   };
   const toggleProviderEnabled = (p: IProvider) => {
     const { checked } = getProviderState(p);
@@ -151,9 +147,7 @@ const ModelModalContent: React.FC = () => {
         void mutate();
         Message.success({ content: t('settings.healthStatusCleared'), duration: 2000 });
       })
-      .catch(() => {
-        void mutate();
-      });
+      .catch((): void => void mutate());
   };
 
   const [addPlatformModalCtrl, apmc] = AddPlatformModal.useModal({
