@@ -90,8 +90,10 @@ import {
 import { fromBackendCompareResult, type RawCompareResult } from './fileSnapshotMapper';
 import {
   absoluteToRelativePath,
+  fromBackendDirOrFileList,
   fromBackendWorkspaceFlatFiles,
   fromBackendWorkspaceList,
+  type RawDirOrFile,
   type RawWorkspaceFlatFile,
 } from './workspaceMapper';
 import {
@@ -542,7 +544,10 @@ export const imageGen = {
 // ---------------------------------------------------------------------------
 
 export const fs = {
-  getFilesByDir: httpPost<Array<IDirOrFile>, { dir: string; root: string }>('/api/fs/dir'),
+  getFilesByDir: withResponseMap(
+    httpPost<Array<RawDirOrFile>, { dir: string; root: string }>('/api/fs/dir'),
+    fromBackendDirOrFileList
+  ),
   listWorkspaceFiles: withResponseMap(
     httpPost<Array<RawWorkspaceFlatFile>, { root: string }>('/api/fs/list'),
     fromBackendWorkspaceFlatFiles
