@@ -30,5 +30,18 @@
   "coreCapabilities": "핵심 기능",
   "assistantsTitle": "어시스턴트",
   "addAssistant": "어시스턴트 추가",
-  "noAssistant": "어시스턴트 사용 안 함"
+  "noAssistant": "어시스턴트 사용 안 함",
+  "directConnect": "대형 모델 직접 연결",
+  "greeting": {
+    "morning": "좋은 아침이에요",
+    "afternoon": "좋은 오후예요",
+    "evening": "좋은 저녁이에요",
+    "night": "밤이 깊었네요"
+  },
+  "heroSubtitle": "오늘은 무엇을 만들어 볼까요?",
+  "recentFiles": {
+    "title": "최근 생성한 파일",
+    "empty": "아직 생성된 파일이 없습니다",
+    "viewAll": "전체 보기"
+  }
 }

@@ -74,7 +74,12 @@
     "selectFolder": "フォルダを選択",
     "recentLabel": "最近使用",
     "chooseDifferentFolder": "別のフォルダを選択",
-    "error": "チームの作成に失敗しました"
+    "error": "チームの作成に失敗しました",
+    "modelExpertTag": "モデル直結",
+    "nameLabel": "チーム名",
+    "needTeamCapable": "チームに対応したモデルを 1 つ以上、進行役として選択してください（CentaurAI / Claude など）",
+    "noSearchResults": "一致するエージェントが見つかりません",
+    "searchPlaceholder": "エージェントを検索..."
   },
   "removeAgent": {
     "confirmTitle": "チームメンバーを削除",
@@ -87,5 +92,71 @@
       "interview": "Agentによる深層インタビューを企画する",
       "expert_review": "複数の専門家が同じ問題を分析する"
     }
-  }
+  },
+  "meeting": {
+    "attachShared": "共有ライブラリを参照",
+    "boardTitle": "シンクタンク",
+    "cancel": "会議をキャンセル",
+    "continue": "議論を続ける →",
+    "emptyTitle": "シンクタンク · AI 専門家を招集",
+    "extraExpertLabel": "専門家を追加",
+    "needAgents": "会議を始めるには進行役（リーダー）1 名と専門家 1 名以上が必要です。",
+    "newMeeting": "新しい会議を開く",
+    "newShort": "新しい会議",
+    "pickHint": "上から方案を 1 つ選んで決定してください",
+    "planTitle": "今回の方案書",
+    "reset": "やり直す",
+    "runningHint": "進行役が議論をリードしています…いつでも挙手して発言できます",
+    "searchKnowledgeBase": "ナレッジベースを検索",
+    "speaking": "発言中",
+    "start": "会議を始める",
+    "step1": "① 下にテーマを入力",
+    "step3": "② 議論を開始",
+    "topicLabel": "議題：",
+    "topicPlaceholder": "議題を投げかけて、AI 専門家たちに会議で論証してもらいましょう…",
+    "interjectPausePlaceholder": "💡 補足したいことは？進行役と専門家たちに伝えましょう…",
+    "interjectPlaceholder": "✋ 挙手して発言：いつでも考えを補足したり軌道修正したり…",
+    "export": {
+      "archive": "エクスポートしてアーカイブ",
+      "copied": "方案書をコピーしました",
+      "copy": "コピー",
+      "copyFailed": "コピーに失敗しました",
+      "openHub": "コンテンツセンターで表示",
+      "archivedToWorkspace": "一時スペースに保存し、コンテンツセンターに同期しました",
+      "archiving": "進行役に Word/PPT のエクスポートとコンテンツセンターへのアーカイブを依頼しました。まもなくコンテンツセンターで確認できます"
+    },
+    "extraExpert": {
+      "title": "さらに専門家を追加（国産モデル / OpenClaw / Hermes など）",
+      "titleShort": "専門家をさらに追加",
+      "none": "追加で参加できる専門家がいません（OpenClaw / Hermes など）"
+    },
+    "history": {
+      "untitled": "無題の議題"
+    },
+    "outputs": {
+      "section": "会議の成果物"
+    },
+    "resolution": {
+      "pick": "これに決める",
+      "picked": "決定済み",
+      "title": "候補案 — あなたが決定"
+    },
+    "role": {
+      "moderator": "主催者",
+      "panelist": "専門家"
+    },
+    "status": {
+      "decided": "決定済み",
+      "resolution": "討議終了 — 決定してください",
+      "running": "会議進行中",
+      "turns": "{{count}} 件の発言が完了"
+    },
+    "turn": {
+      "failed": "発言なし"
+    },
+    "emptyHint": "異なるモデルの AI 専門家があなたの議題をめぐって構造的に討議し、互いに議論を戦わせ、単一の AI よりも質の高い「提案書」を最終的にまとめ上げます。",
+    "pausedHint": "⏸ 主催者があなたを待っています — 下に考えを書き込み、準備ができたら「討議を続ける」をクリックしてください"
+  },
+  "moreAgents": "他に {{count}} 名",
+  "noAgents": "メンバーなし"
 }

@@ -71,7 +71,8 @@
     "removeProjectTitle": "Удалить проект",
     "removeProject": "Удалить проект",
     "removeProjectConfirm": "Удалить проект «{{name}}»? Будет также удалено {{count}} бесед(ы) в нём.",
-    "newConversationInProject": "Новая беседа в этом проекте"
+    "newConversationInProject": "Новая беседа в этом проекте",
+    "deleting": "Удаление..."
   },
   "historySearch": {
     "tooltip": "Поиск сообщений",
@@ -353,7 +354,8 @@
       "vscode": "VS Code",
       "terminal": "Терминал",
       "explorer": "Проводник"
-    }
+    },
+    "pasteConfirm_file_name": "Имя файла"
   },
   "minimap": {
     "searchAria": "Поиск по диалогу",
@@ -480,5 +482,6 @@
   "sendbox": {
     "hint": "Введите / для команд, @ для ссылок на файлы"
   },
-  "notFound": "Беседа не найдена или была удалена"
+  "notFound": "Беседа не найдена или была удалена",
+  "context_usage.contextUsed": "контекст использован"
 }

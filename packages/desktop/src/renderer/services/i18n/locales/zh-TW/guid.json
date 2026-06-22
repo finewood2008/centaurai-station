@@ -30,5 +30,18 @@
   "coreCapabilities": "核心能力",
   "assistantsTitle": "助理",
   "addAssistant": "添加助理",
-  "noAssistant": "不使用助理"
+  "noAssistant": "不使用助理",
+  "directConnect": "直連大模型",
+  "greeting": {
+    "morning": "早安",
+    "afternoon": "午安",
+    "evening": "晚安",
+    "night": "夜深了"
+  },
+  "heroSubtitle": "今天想做點什麼？",
+  "recentFiles": {
+    "title": "最近產生的檔案",
+    "empty": "尚無產生的檔案",
+    "viewAll": "查看全部"
+  }
 }

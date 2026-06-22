@@ -74,7 +74,12 @@
     "selectFolder": "Selecionar pasta",
     "recentLabel": "Recente",
     "chooseDifferentFolder": "Escolher uma pasta diferente",
-    "error": "Falha ao criar equipe"
+    "error": "Falha ao criar equipe",
+    "modelExpertTag": "Modelo direto",
+    "nameLabel": "Nome da equipe",
+    "needTeamCapable": "Selecione pelo menos um modelo com suporte a equipe como moderador (ex.: CentaurAI / Claude)",
+    "noSearchResults": "Nenhum resultado encontrado",
+    "searchPlaceholder": "Buscar agentes..."
   },
   "removeAgent": {
     "confirmTitle": "Remover Membro da Equipe",
@@ -87,5 +92,71 @@
       "interview": "Planejar uma entrevista aprofundada entre os agentes",
       "expert_review": "Ter vários especialistas analisando o mesmo problema"
     }
-  }
+  },
+  "meeting": {
+    "attachShared": "Referenciar biblioteca compartilhada",
+    "boardTitle": "Think Tank",
+    "cancel": "Cancelar reunião",
+    "continue": "Continuar →",
+    "emptyTitle": "Think Tank · reunir especialistas de IA",
+    "extraExpertLabel": "Adicionar especialista",
+    "needAgents": "Você precisa de 1 moderador (líder) e ao menos 1 especialista para iniciar uma reunião.",
+    "newMeeting": "Iniciar uma nova reunião",
+    "newShort": "Nova reunião",
+    "pickHint": "Escolha uma opção acima para decidir",
+    "planTitle": "Plano da reunião",
+    "reset": "Reiniciar",
+    "runningHint": "O moderador está conduzindo a discussão… levante a mão para intervir a qualquer momento",
+    "searchKnowledgeBase": "Buscar na base de conhecimento",
+    "speaking": "Falando",
+    "start": "Iniciar",
+    "step1": "① Insira um tópico abaixo",
+    "step3": "② Inicie a discussão",
+    "topicLabel": "Tópico: ",
+    "topicPlaceholder": "Proponha uma questão para um painel de especialistas de IA debater…",
+    "interjectPausePlaceholder": "💡 Algo a acrescentar? Diga ao moderador e aos especialistas…",
+    "interjectPlaceholder": "✋ Levante a mão: acrescente ideias ou corrija o rumo a qualquer momento…",
+    "export": {
+      "archive": "Exportar e arquivar",
+      "copied": "Plano copiado",
+      "copy": "Copiar",
+      "copyFailed": "Falha ao copiar",
+      "openHub": "Ver no Content Hub",
+      "archivedToWorkspace": "Salvo no espaço de trabalho temporário e sincronizado com o Content Hub",
+      "archiving": "Foi solicitado ao moderador que exporte o Word/PPT e o arquive no Content Hub; em breve você poderá vê-lo lá"
+    },
+    "extraExpert": {
+      "title": "Adicionar mais especialistas (modelos nacionais / OpenClaw / Hermes …)",
+      "titleShort": "Adicionar mais especialistas",
+      "none": "Nenhum outro especialista disponível para participar (ex.: OpenClaw / Hermes)"
+    },
+    "history": {
+      "untitled": "Tópico sem título"
+    },
+    "outputs": {
+      "section": "Resultados da reunião"
+    },
+    "resolution": {
+      "pick": "Escolher esta",
+      "picked": "Decidido",
+      "title": "Opções candidatas — você decide"
+    },
+    "role": {
+      "moderator": "Anfitrião",
+      "panelist": "Especialista"
+    },
+    "status": {
+      "decided": "Decidido",
+      "resolution": "Discussão concluída — sua decisão",
+      "running": "Reunião em andamento",
+      "turns": "{{count}} intervenções concluídas"
+    },
+    "turn": {
+      "failed": "Sem resposta"
+    },
+    "emptyHint": "Reúna especialistas de IA de diferentes modelos para uma discussão estruturada sobre o seu tópico, debatendo entre si e sintetizando uma \"Proposta\" de qualidade superior à que qualquer IA isolada poderia produzir.",
+    "pausedHint": "⏸ O anfitrião está aguardando enquanto você se atualiza — adicione suas ideias abaixo e clique em \"Continuar Discussão\" quando estiver pronto"
+  },
+  "moreAgents": "mais {{count}}",
+  "noAgents": "Nenhum membro"
 }

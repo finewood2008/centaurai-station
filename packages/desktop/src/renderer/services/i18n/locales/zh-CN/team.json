@@ -74,7 +74,12 @@
     "selectFolder": "选择项目文件夹",
     "recentLabel": "最近使用",
     "chooseDifferentFolder": "选择其他目录",
-    "error": "创建团队失败"
+    "error": "创建团队失败",
+    "modelExpertTag": "直连模型",
+    "nameLabel": "团队名称",
+    "needTeamCapable": "请至少选择一个支持团队的模型作为主持人（如 CentaurAI / Claude）",
+    "noSearchResults": "未找到匹配的智能体",
+    "searchPlaceholder": "搜索智能体..."
   },
   "removeAgent": {
     "confirmTitle": "移除团队成员",
@@ -116,11 +121,14 @@
       "copied": "已复制方案书",
       "copy": "复制",
       "copyFailed": "复制失败",
-      "openHub": "在内容中心查看"
+      "openHub": "在内容中心查看",
+      "archivedToWorkspace": "已存入临时空间,并同步到内容中心",
+      "archiving": "已请主持人导出 Word/PPT 并归档到内容中心,稍后可在内容中心查看"
     },
     "extraExpert": {
       "title": "加入更多专家（国产模型 / OpenClaw / Hermes 等）",
-      "titleShort": "加入更多专家"
+      "titleShort": "加入更多专家",
+      "none": "没有可加入的其他专家（如 OpenClaw / Hermes）"
     },
     "history": {
       "untitled": "未命名议题"
@@ -140,10 +148,15 @@
     "status": {
       "decided": "已拍板",
       "resolution": "讨论结束，请拍板",
-      "running": "会议进行中"
+      "running": "会议进行中",
+      "turns": "已完成 {{count}} 段发言"
     },
     "turn": {
       "failed": "未发言"
-    }
-  }
+    },
+    "emptyHint": "让不同模型的 AI 专家围绕你的议题结构化研讨、互相博弈,最后合成一份比单个 AI 更高质量的《方案书》。",
+    "pausedHint": "⏸ 主持人等你看完 — 可在下方补充想法，准备好后点「继续讨论」"
+  },
+  "moreAgents": "还有 {{count}} 位",
+  "noAgents": "无成员"
 }

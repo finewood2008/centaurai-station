@@ -30,5 +30,18 @@
   "coreCapabilities": "Ключові можливості",
   "assistantsTitle": "Асистенти",
   "addAssistant": "Додати асистента",
-  "noAssistant": "Без асистента"
+  "noAssistant": "Без асистента",
+  "directConnect": "Пряме підключення до LLM",
+  "greeting": {
+    "morning": "Доброго ранку",
+    "afternoon": "Доброго дня",
+    "evening": "Доброго вечора",
+    "night": "Працюємо допізна"
+  },
+  "heroSubtitle": "Що створимо сьогодні?",
+  "recentFiles": {
+    "title": "Нещодавні файли",
+    "empty": "Поки що немає файлів",
+    "viewAll": "Переглянути всі"
+  }
 }

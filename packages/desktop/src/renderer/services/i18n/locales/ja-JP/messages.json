@@ -66,5 +66,8 @@
     "yesAlwaysAllowTool": "はい、サーバー \"{{serverName}}\" のツール \"{{toolName}}\" を常に許可",
     "yesAlwaysAllowServer": "はい、サーバー \"{{serverName}}\" のすべてのツールを常に許可",
     "no": "いいえ (esc)"
-  }
+  },
+  "export.conversation_idLabel": "会話 ID",
+  "export.file_nameLabel": "ファイル名",
+  "export.file_namePlaceholder": "ファイル名を入力してください"
 }

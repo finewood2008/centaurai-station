@@ -66,5 +66,8 @@
   },
   "atFile.hint": "Введите текст для поиска файлов",
   "atFile.menuLabel": "Упоминания файлов",
-  "atFile.loading": "Загрузка..."
+  "atFile.loading": "Загрузка...",
+  "export.conversation_idLabel": "ID диалога",
+  "export.file_nameLabel": "Имя файла",
+  "export.file_namePlaceholder": "Введите имя файла"
 }

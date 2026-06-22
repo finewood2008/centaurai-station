@@ -71,7 +71,8 @@
     "removeProjectTitle": "Projeyi kaldır",
     "removeProject": "Projeyi kaldır",
     "removeProjectConfirm": "\"{{name}}\" projesi kaldırılsın mı? Projedeki {{count}} konuşma da kaldırılacak.",
-    "newConversationInProject": "Bu projede yeni konuşma"
+    "newConversationInProject": "Bu projede yeni konuşma",
+    "deleting": "Siliniyor..."
   },
   "historySearch": {
     "tooltip": "Mesajları ara",
@@ -343,7 +344,8 @@
       "vscode": "VS Code",
       "terminal": "Terminal",
       "explorer": "Dosya Gezgini"
-    }
+    },
+    "pasteConfirm_file_name": "Dosya adı"
   },
   "minimap": {
     "searchAria": "Sohbeti ara",
@@ -482,5 +484,6 @@
   "sendbox": {
     "hint": "Komutlar için /, dosya için @ yazın"
   },
-  "notFound": "Konuşma bulunamadı veya silinmiş"
+  "notFound": "Konuşma bulunamadı veya silinmiş",
+  "context_usage.contextUsed": "bağlam kullanıldı"
 }

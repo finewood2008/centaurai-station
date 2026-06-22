@@ -929,7 +929,13 @@
     "step4": "授权成功后，即可通过企业微信与 AI 助手对话",
     "waitingConnection": "请确保 WebUI 已运行，以便企微能访问回调地址",
     "agent": "对话 Agent",
-    "agentDesc": "用于企业微信对话"
+    "agentDesc": "用于企业微信对话",
+    "botIdDesc": "企业微信智能机器人(长连接模式)的 Bot ID",
+    "botId": "Bot ID",
+    "secretDesc": "企业微信智能机器人(长连接模式)的 Secret",
+    "secret": "Secret",
+    "wsHint": "使用企业微信智能机器人的“长连接(WebSocket)”模式,无需配置回调 URL、域名或公网 IP。",
+    "wsTitle": "企业微信 WebSocket 连接"
   },
   "addAssistant": "添加助手",
   "extensionAssistantReadonly": "扩展助手为只读，你可以复制它并编辑副本。",
@@ -1002,7 +1008,10 @@
     "pendingApprovalHint": "请在 OpenClaw Gateway 上批准此设备",
     "pendingTimeout": "审批请求已过期（5 分钟）。请重试。",
     "pendingCancel": "取消",
-    "pendingTimeRemaining": "剩余时间：{{time}}"
+    "pendingTimeRemaining": "剩余时间：{{time}}",
+    "allow_insecure": "允许不安全的 TLS 连接",
+    "auth_token": "鉴权令牌",
+    "auth_type": "鉴权方式"
   },
   "retry": "重试",
   "runtimeStatus": {
@@ -1041,5 +1050,8 @@
   "webui.downloadClient.otherOs": "其他系统",
   "client": "本地客户端",
   "webui.downloadClient.latest": "最新",
-  "webui.downloadClient.unknownVersion": "其他版本"
+  "webui.downloadClient.unknownVersion": "其他版本",
+  "agent_namePlaceholder": "例如:我的自定义智能体",
+  "extensionSkills": "扩展技能",
+  "extensionSkillsBadge": "扩展"
 }

@@ -66,5 +66,8 @@
     "yesAlwaysAllowTool": "Evet, \"{{serverName}}\" sunucusundan \"{{toolName}}\" aracına her zaman izin ver",
     "yesAlwaysAllowServer": "Evet, \"{{serverName}}\" sunucusundaki tüm araçlara her zaman izin ver",
     "no": "Hayır (esc)"
-  }
+  },
+  "export.conversation_idLabel": "Konuşma Kimliği",
+  "export.file_nameLabel": "Dosya adı",
+  "export.file_namePlaceholder": "Bir dosya adı girin"
 }

@@ -71,7 +71,8 @@
     "removeProjectTitle": "プロジェクトを削除",
     "removeProject": "プロジェクトを削除",
     "removeProjectConfirm": "プロジェクト「{{name}}」を削除しますか？プロジェクト内の {{count}} 件の会話も削除されます。",
-    "newConversationInProject": "このプロジェクト内で新しい会話"
+    "newConversationInProject": "このプロジェクト内で新しい会話",
+    "deleting": "削除中..."
   },
   "historySearch": {
     "tooltip": "メッセージを検索",
@@ -353,7 +354,8 @@
       "vscode": "VS Code",
       "terminal": "ターミナル",
       "explorer": "エクスプローラー"
-    }
+    },
+    "pasteConfirm_file_name": "ファイル名"
   },
   "minimap": {
     "searchAria": "会話を検索",
@@ -480,5 +482,6 @@
   "sendbox": {
     "hint": "/ でコマンド、@ でファイルを参照"
   },
-  "notFound": "会話が存在しないか、削除されました"
+  "notFound": "会話が存在しないか、削除されました",
+  "context_usage.contextUsed": "コンテキスト使用量"
 }

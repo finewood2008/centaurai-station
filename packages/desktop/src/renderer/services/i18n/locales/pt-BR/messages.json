@@ -66,5 +66,8 @@
     "yesAlwaysAllowTool": "Sim, sempre permitir a ferramenta \"{{toolName}}\" do servidor \"{{serverName}}\"",
     "yesAlwaysAllowServer": "Sim, sempre permitir todas as ferramentas do servidor \"{{serverName}}\"",
     "no": "Não (esc)"
-  }
+  },
+  "export.conversation_idLabel": "ID da Conversa",
+  "export.file_nameLabel": "Nome do arquivo",
+  "export.file_namePlaceholder": "Digite o nome do arquivo"
 }

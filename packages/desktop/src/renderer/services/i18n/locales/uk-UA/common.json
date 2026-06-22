@@ -116,5 +116,7 @@
   "unit": {
     "minute_short": "хв",
     "second_short": "с"
-  }
+  },
+  "enabled": "Увімкнено",
+  "disabled": "Вимкнено"
 }

@@ -71,7 +71,8 @@
     "removeProjectTitle": "프로젝트 제거",
     "removeProject": "프로젝트 제거",
     "removeProjectConfirm": "\"{{name}}\" 프로젝트를 제거하시겠습니까? 프로젝트의 {{count}}개 대화도 함께 제거됩니다.",
-    "newConversationInProject": "이 프로젝트에서 새 대화"
+    "newConversationInProject": "이 프로젝트에서 새 대화",
+    "deleting": "삭제 중..."
   },
   "historySearch": {
     "tooltip": "메시지 검색",
@@ -353,7 +354,8 @@
       "vscode": "VS Code",
       "terminal": "터미널",
       "explorer": "파일 탐색기"
-    }
+    },
+    "pasteConfirm_file_name": "파일 이름"
   },
   "minimap": {
     "searchAria": "대화 검색",
@@ -480,5 +482,6 @@
   "sendbox": {
     "hint": "/ 로 명령, @ 로 파일 참조"
   },
-  "notFound": "대화를 찾을 수 없거나 삭제되었습니다"
+  "notFound": "대화를 찾을 수 없거나 삭제되었습니다",
+  "context_usage.contextUsed": "사용된 컨텍스트"
 }

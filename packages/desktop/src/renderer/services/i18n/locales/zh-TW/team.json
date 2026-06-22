@@ -74,7 +74,12 @@
     "selectFolder": "選擇專案資料夾",
     "recentLabel": "最近使用",
     "chooseDifferentFolder": "選擇其他目錄",
-    "error": "建立團隊失敗"
+    "error": "建立團隊失敗",
+    "modelExpertTag": "直連模型",
+    "nameLabel": "團隊名稱",
+    "needTeamCapable": "請至少選擇一個支援團隊的模型作為主持人（如 CentaurAI / Claude）",
+    "noSearchResults": "未找到符合的智能體",
+    "searchPlaceholder": "搜尋智能體..."
   },
   "removeAgent": {
     "confirmTitle": "移除團隊成員",
@@ -87,5 +92,71 @@
       "interview": "策劃一場深度訪談",
       "expert_review": "多位專家會診同一個問題"
     }
-  }
+  },
+  "meeting": {
+    "attachShared": "引用共享庫",
+    "boardTitle": "智囊團",
+    "cancel": "取消會議",
+    "continue": "繼續討論 →",
+    "emptyTitle": "智囊團 · 召集 AI 專家開會",
+    "extraExpertLabel": "加專家",
+    "needAgents": "需要 1 位主持人（隊長）和至少 1 位專家才能開會。",
+    "newMeeting": "開一場新會議",
+    "newShort": "新會議",
+    "pickHint": "請在上方選擇一個方案拍板",
+    "planTitle": "本場方案書",
+    "reset": "重開",
+    "runningHint": "主持人正在帶領專家討論…可隨時舉手插話",
+    "searchKnowledgeBase": "檢索知識庫",
+    "speaking": "發言中",
+    "start": "開會",
+    "step1": "① 在下方輸入主題",
+    "step3": "② 開始討論",
+    "topicLabel": "議題：",
+    "topicPlaceholder": "拋出一個議題，讓一群 AI 專家幫你開會論證…",
+    "interjectPausePlaceholder": "💡 想補充什麼？說給主持人和專家們…",
+    "interjectPlaceholder": "✋ 舉手插話：隨時補充想法或糾偏…",
+    "export": {
+      "archive": "匯出歸檔",
+      "copied": "已複製方案書",
+      "copy": "複製",
+      "copyFailed": "複製失敗",
+      "openHub": "在內容中心查看",
+      "archivedToWorkspace": "已存入暫存空間，並同步到內容中心",
+      "archiving": "已請主持人匯出 Word/PPT 並歸檔到內容中心，稍後可在內容中心查看"
+    },
+    "extraExpert": {
+      "title": "加入更多專家（國產模型 / OpenClaw / Hermes 等）",
+      "titleShort": "加入更多專家",
+      "none": "沒有可加入的其他專家（如 OpenClaw / Hermes）"
+    },
+    "history": {
+      "untitled": "未命名議題"
+    },
+    "outputs": {
+      "section": "會議產出"
+    },
+    "resolution": {
+      "pick": "就選這個",
+      "picked": "已拍板",
+      "title": "候選方案 — 請老闆拍板"
+    },
+    "role": {
+      "moderator": "主持人",
+      "panelist": "專家"
+    },
+    "status": {
+      "decided": "已拍板",
+      "resolution": "討論結束，請拍板",
+      "running": "會議進行中",
+      "turns": "已完成 {{count}} 段發言"
+    },
+    "turn": {
+      "failed": "未發言"
+    },
+    "emptyHint": "讓不同模型的 AI 專家圍繞你的議題結構化研討、互相博弈，最後合成一份比單個 AI 更高品質的《方案書》。",
+    "pausedHint": "⏸ 主持人等你看完 — 可在下方補充想法，準備好後點「繼續討論」"
+  },
+  "moreAgents": "還有 {{count}} 位",
+  "noAgents": "無成員"
 }

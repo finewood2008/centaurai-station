@@ -929,7 +929,13 @@
     "step4": "Once approved, you can chat with the AI assistant through WeCom.",
     "waitingConnection": "Ensure WebUI is running so WeCom can reach the callback URL.",
     "agent": "Agent",
-    "agentDesc": "Used for WeCom conversations"
+    "agentDesc": "Used for WeCom conversations",
+    "botIdDesc": "Bot ID from WeCom Intelligent Bot (Long Connection mode)",
+    "botId": "Bot ID",
+    "secretDesc": "Secret from WeCom Intelligent Bot (Long Connection mode)",
+    "secret": "Secret",
+    "wsHint": "Use the WeCom Intelligent Bot “Long Connection (WebSocket)” mode. No callback URL / domain / public IP required.",
+    "wsTitle": "WeCom WebSocket connection"
   },
   "extensionAssistantReadonly": "Extension assistants are read-only. You can duplicate it and edit the copy.",
   "agentManagement": {
@@ -1001,7 +1007,10 @@
     "pendingApprovalHint": "Please approve this device on the OpenClaw Gateway",
     "pendingTimeout": "Approval request expired (5 minutes). Please try again.",
     "pendingCancel": "Cancel",
-    "pendingTimeRemaining": "Time remaining: {{time}}"
+    "pendingTimeRemaining": "Time remaining: {{time}}",
+    "allow_insecure": "Allow insecure TLS",
+    "auth_token": "Auth token",
+    "auth_type": "Auth type"
   },
   "retry": "Retry",
   "runtimeStatus": {
@@ -1040,5 +1049,8 @@
   "webui.downloadClient.otherOs": "Other",
   "client": "Local Client",
   "webui.downloadClient.latest": "Latest",
-  "webui.downloadClient.unknownVersion": "Other version"
+  "webui.downloadClient.unknownVersion": "Other version",
+  "agent_namePlaceholder": "e.g. My Custom Agent",
+  "extensionSkills": "Extension Skills",
+  "extensionSkillsBadge": "Extension"
 }

@@ -71,7 +71,8 @@
     "removeProjectTitle": "Remove project",
     "removeProject": "Remove project",
     "removeProjectConfirm": "Remove project \"{{name}}\"? Its {{count}} conversation(s) will be removed too.",
-    "newConversationInProject": "New chat in this project"
+    "newConversationInProject": "New chat in this project",
+    "deleting": "Deleting..."
   },
   "historySearch": {
     "tooltip": "Search messages",
@@ -353,7 +354,8 @@
       "vscode": "VS Code",
       "terminal": "Terminal",
       "explorer": "File Explorer"
-    }
+    },
+    "pasteConfirm_file_name": "File name"
   },
   "minimap": {
     "searchAria": "Search conversation",
@@ -480,5 +482,6 @@
   "sendbox": {
     "hint": "Type / for commands, @ to reference files"
   },
-  "notFound": "Conversation not found or has been deleted"
+  "notFound": "Conversation not found or has been deleted",
+  "context_usage.contextUsed": "context used"
 }

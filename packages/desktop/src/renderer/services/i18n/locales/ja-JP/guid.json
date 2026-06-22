@@ -30,5 +30,18 @@
   "coreCapabilities": "主な機能",
   "assistantsTitle": "アシスタント",
   "addAssistant": "アシスタントを追加",
-  "noAssistant": "アシスタントなし"
+  "noAssistant": "アシスタントなし",
+  "directConnect": "LLM に直接接続",
+  "greeting": {
+    "morning": "おはようございます",
+    "afternoon": "こんにちは",
+    "evening": "こんばんは",
+    "night": "夜更かしですね"
+  },
+  "heroSubtitle": "今日は何を作りましょうか？",
+  "recentFiles": {
+    "title": "最近のファイル",
+    "empty": "生成されたファイルはまだありません",
+    "viewAll": "すべて表示"
+  }
 }

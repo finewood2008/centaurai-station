@@ -74,7 +74,12 @@
     "selectFolder": "Klasör seç",
     "recentLabel": "Son kullanılan",
     "chooseDifferentFolder": "Farklı klasör seç",
-    "error": "Takım oluşturulamadı"
+    "error": "Takım oluşturulamadı",
+    "modelExpertTag": "Doğrudan model",
+    "nameLabel": "Takım adı",
+    "needTeamCapable": "Moderatör olarak takımı destekleyen en az bir model seçin (ör. CentaurAI / Claude)",
+    "noSearchResults": "Sonuç bulunamadı",
+    "searchPlaceholder": "Ajan ara..."
   },
   "removeAgent": {
     "confirmTitle": "Takım Üyesini Kaldır",
@@ -86,7 +91,76 @@
       "help_build": "Sıfırdan yeni bir özellik oluşturmama yardım et",
       "analyze_code": "Bu kod tabanını analiz et ve iyileştirmeler öner",
       "write_report": "Bir konuyu araştır ve ayrıntılı rapor yaz",
-      "fix_bug": "Projemizdeki hataları bul ve düzelt"
+      "fix_bug": "Projemizdeki hataları bul ve düzelt",
+      "debate": "Ajanların farklı tarafları savunduğu bir tartışma düzenle",
+      "interview": "Ajanlar arasında derinlemesine bir röportaj planla",
+      "expert_review": "Birden fazla uzmana aynı sorunu inceletin"
     }
-  }
+  },
+  "meeting": {
+    "attachShared": "Paylaşılan kitaplığa başvur",
+    "boardTitle": "Beyin Takımı",
+    "cancel": "Toplantıyı iptal et",
+    "continue": "Devam et →",
+    "emptyTitle": "Beyin Takımı · AI uzmanlarını toplayın",
+    "extraExpertLabel": "Uzman ekle",
+    "needAgents": "Toplantı başlatmak için 1 moderatör (lider) ve en az 1 uzman gerekir.",
+    "newMeeting": "Yeni bir toplantı başlat",
+    "newShort": "Yeni toplantı",
+    "pickHint": "Karar vermek için yukarıdan bir seçenek seçin",
+    "planTitle": "Toplantı planı",
+    "reset": "Yeniden başlat",
+    "runningHint": "Moderatör tartışmayı yönetiyor… istediğiniz an el kaldırıp söze girebilirsiniz",
+    "searchKnowledgeBase": "Bilgi tabanında ara",
+    "speaking": "Konuşuyor",
+    "start": "Başlat",
+    "step1": "① Aşağıya bir konu girin",
+    "step3": "② Tartışmayı başlatın",
+    "topicLabel": "Konu: ",
+    "topicPlaceholder": "Bir AI uzmanları panelinin tartışması için bir soru ortaya atın…",
+    "interjectPausePlaceholder": "💡 Eklemek istediğiniz bir şey var mı? Moderatöre ve uzmanlara söyleyin…",
+    "interjectPlaceholder": "✋ El kaldırın: istediğiniz an düşünce ekleyin veya yönü düzeltin…",
+    "export": {
+      "archive": "Dışa aktar ve arşivle",
+      "copied": "Plan kopyalandı",
+      "copy": "Kopyala",
+      "copyFailed": "Kopyalama başarısız",
+      "openHub": "İçerik Merkezi'nde görüntüle",
+      "archivedToWorkspace": "Geçici çalışma alanına kaydedildi ve İçerik Merkezi'ne senkronize edildi",
+      "archiving": "Moderatörden Word/PPT'yi dışa aktarıp İçerik Merkezi'ne arşivlemesi istendi; kısa süre içinde orada görüntüleyebilirsiniz"
+    },
+    "extraExpert": {
+      "title": "Daha fazla uzman ekle (yerli modeller / OpenClaw / Hermes …)",
+      "titleShort": "Daha fazla uzman ekle",
+      "none": "Katılabilecek başka uzman yok (ör. OpenClaw / Hermes)"
+    },
+    "history": {
+      "untitled": "Başlıksız konu"
+    },
+    "outputs": {
+      "section": "Toplantı çıktıları"
+    },
+    "resolution": {
+      "pick": "Bunu seç",
+      "picked": "Karara bağlandı",
+      "title": "Aday seçenekler — karar sizin"
+    },
+    "role": {
+      "moderator": "Moderatör",
+      "panelist": "Uzman"
+    },
+    "status": {
+      "decided": "Karara bağlandı",
+      "resolution": "Tartışma bitti — lütfen karar verin",
+      "running": "Toplantı devam ediyor",
+      "turns": "{{count}} tur tamamlandı"
+    },
+    "turn": {
+      "failed": "Yanıt yok"
+    },
+    "emptyHint": "Farklı modellerden gelen yapay zeka uzmanlarının konunuz etrafında yapılandırılmış bir tartışma yürütmesini, birbirleriyle fikir alışverişinde bulunmasını ve tek bir yapay zekanın üretebileceğinden daha yüksek kaliteli bir \"Öneri Belgesi\" oluşturmasını sağlayın.",
+    "pausedHint": "⏸ Moderatör siz yetişene kadar bekliyor — düşüncelerinizi aşağıya ekleyin, hazır olduğunuzda \"Tartışmaya Devam Et\"e tıklayın"
+  },
+  "moreAgents": "{{count}} kişi daha",
+  "noAgents": "Üye yok"
 }

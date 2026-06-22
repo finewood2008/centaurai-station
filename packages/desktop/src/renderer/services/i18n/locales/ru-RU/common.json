@@ -111,5 +111,11 @@
   "optional": "(необязательно)",
   "clear": "Очистить",
   "historyBack": "Назад",
-  "agentMode": "Режим агента"
+  "agentMode": "Режим агента",
+  "enabled": "Включено",
+  "disabled": "Отключено",
+  "unit": {
+    "minute_short": "м",
+    "second_short": "с"
+  }
 }

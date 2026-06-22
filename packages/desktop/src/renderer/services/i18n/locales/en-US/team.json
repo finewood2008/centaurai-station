@@ -74,7 +74,12 @@
     "selectFolder": "Select folder",
     "recentLabel": "Recent",
     "chooseDifferentFolder": "Choose a different folder",
-    "error": "Failed to create team"
+    "error": "Failed to create team",
+    "modelExpertTag": "Direct model",
+    "nameLabel": "Team name",
+    "needTeamCapable": "Please select at least one team-capable model as the moderator (e.g. CentaurAI / Claude)",
+    "noSearchResults": "No results found",
+    "searchPlaceholder": "Search agents..."
   },
   "removeAgent": {
     "confirmTitle": "Remove Team Member",
@@ -116,11 +121,14 @@
       "copied": "Plan copied",
       "copy": "Copy",
       "copyFailed": "Copy failed",
-      "openHub": "View in Content Hub"
+      "openHub": "View in Content Hub",
+      "archivedToWorkspace": "Saved to the temporary workspace and synced to the Content Hub",
+      "archiving": "The moderator has been asked to export the Word/PPT and archive it to the Content Hub; you can view it there shortly"
     },
     "extraExpert": {
       "title": "Add more experts (domestic models / OpenClaw / Hermes …)",
-      "titleShort": "Add more experts"
+      "titleShort": "Add more experts",
+      "none": "No additional experts available to join (e.g. OpenClaw / Hermes)"
     },
     "history": {
       "untitled": "Untitled topic"
@@ -140,10 +148,15 @@
     "status": {
       "decided": "Decided",
       "resolution": "Discussion done — please decide",
-      "running": "Meeting in progress"
+      "running": "Meeting in progress",
+      "turns": "Completed {{count}} turns"
     },
     "turn": {
       "failed": "No response"
-    }
-  }
+    },
+    "emptyHint": "Have AI experts from different models hold a structured discussion around your topic, debate one another, and synthesize a higher-quality \"Proposal\" than any single AI could produce.",
+    "pausedHint": "⏸ The moderator is waiting while you catch up — add your thoughts below, then click \"Continue Discussion\" when ready"
+  },
+  "moreAgents": "{{count}} more",
+  "noAgents": "No members"
 }

@@ -66,5 +66,8 @@
     "yesAlwaysAllowTool": "예, 서버 \"{{serverName}}\"의 도구 \"{{toolName}}\" 항상 허용",
     "yesAlwaysAllowServer": "예, 서버 \"{{serverName}}\"의 모든 도구 항상 허용",
     "no": "아니요 (esc)"
-  }
+  },
+  "export.conversation_idLabel": "대화 ID",
+  "export.file_nameLabel": "파일 이름",
+  "export.file_namePlaceholder": "파일 이름을 입력하세요"
 }

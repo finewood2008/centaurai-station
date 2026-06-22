@@ -111,5 +111,11 @@
   "import": "가져오기",
   "processing": "처리 중...",
   "optional": "(선택 사항)",
-  "clear": "지우기"
+  "clear": "지우기",
+  "enabled": "활성화됨",
+  "disabled": "비활성화됨",
+  "unit": {
+    "minute_short": "분",
+    "second_short": "초"
+  }
 }

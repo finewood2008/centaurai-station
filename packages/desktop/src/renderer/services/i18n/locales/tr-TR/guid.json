@@ -30,5 +30,18 @@
   "coreCapabilities": "Temel yetenekler",
   "assistantsTitle": "Asistanlar",
   "addAssistant": "Asistan ekle",
-  "noAssistant": "Asistan kullanma"
+  "noAssistant": "Asistan kullanma",
+  "directConnect": "Doğrudan LLM",
+  "greeting": {
+    "morning": "Günaydın",
+    "afternoon": "İyi günler",
+    "evening": "İyi akşamlar",
+    "night": "Geç saatlere kaldınız"
+  },
+  "heroSubtitle": "Bugün ne yapalım?",
+  "recentFiles": {
+    "title": "Son dosyalar",
+    "empty": "Henüz dosya yok",
+    "viewAll": "Tümünü gör"
+  }
 }

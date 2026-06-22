@@ -65,5 +65,9 @@
     "yesAlwaysAllowTool": "Так, завжди дозволяти інструмент «{{toolName}}» із сервера «{{serverName}}»",
     "yesAlwaysAllowServer": "Так, завжди дозволяти всі інструменти із сервера «{{serverName}}»",
     "no": "Ні (esc)"
-  }
+  },
+  "copyLastOutput.empty": "Поки немає відповіді для копіювання",
+  "export.conversation_idLabel": "ID діалогу",
+  "export.file_nameLabel": "Ім'я файлу",
+  "export.file_namePlaceholder": "Введіть ім'я файлу"
 }

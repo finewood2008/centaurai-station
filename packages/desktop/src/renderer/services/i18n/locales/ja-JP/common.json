@@ -111,5 +111,11 @@
   "import": "インポート",
   "processing": "処理中...",
   "optional": "（任意）",
-  "clear": "クリア"
+  "clear": "クリア",
+  "enabled": "有効",
+  "disabled": "無効",
+  "unit": {
+    "minute_short": "分",
+    "second_short": "秒"
+  }
 }

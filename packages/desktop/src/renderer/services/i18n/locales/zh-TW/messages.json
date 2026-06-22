@@ -66,5 +66,8 @@
     "yesAlwaysAllowTool": "是，始終允許來自伺服器 \"{{serverName}}\" 的工具 \"{{toolName}}\"",
     "yesAlwaysAllowServer": "是，始終允許來自伺服器 \"{{serverName}}\" 的所有工具",
     "no": "否 (esc)"
-  }
+  },
+  "export.conversation_idLabel": "對話 ID",
+  "export.file_nameLabel": "檔名",
+  "export.file_namePlaceholder": "請輸入檔名"
 }

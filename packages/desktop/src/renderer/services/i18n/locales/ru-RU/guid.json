@@ -30,5 +30,18 @@
   "coreCapabilities": "Ключевые возможности",
   "assistantsTitle": "Ассистенты",
   "addAssistant": "Добавить ассистента",
-  "noAssistant": "Без ассистента"
+  "noAssistant": "Без ассистента",
+  "directConnect": "Прямое подключение к LLM",
+  "greeting": {
+    "morning": "Доброе утро",
+    "afternoon": "Добрый день",
+    "evening": "Добрый вечер",
+    "night": "Поздняя ночь"
+  },
+  "heroSubtitle": "Что создадим сегодня?",
+  "recentFiles": {
+    "title": "Недавние файлы",
+    "empty": "Пока нет файлов",
+    "viewAll": "Показать все"
+  }
 }

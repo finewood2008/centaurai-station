@@ -30,5 +30,18 @@
   "coreCapabilities": "Principais capacidades",
   "assistantsTitle": "Assistentes",
   "addAssistant": "Adicionar assistente",
-  "noAssistant": "Sem assistente"
+  "noAssistant": "Sem assistente",
+  "directConnect": "LLM direto",
+  "greeting": {
+    "morning": "Bom dia",
+    "afternoon": "Boa tarde",
+    "evening": "Boa noite",
+    "night": "Trabalhando até tarde"
+  },
+  "heroSubtitle": "O que vamos criar hoje?",
+  "recentFiles": {
+    "title": "Arquivos recentes",
+    "empty": "Nenhum arquivo recente ainda",
+    "viewAll": "Ver tudo"
+  }
 }

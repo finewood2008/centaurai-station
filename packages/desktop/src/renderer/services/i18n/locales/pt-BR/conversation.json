@@ -71,7 +71,8 @@
     "removeProjectTitle": "Remover projeto",
     "removeProject": "Remover projeto",
     "removeProjectConfirm": "Remover o projeto \"{{name}}\"? Suas {{count}} conversa(s) também serão removidas.",
-    "newConversationInProject": "Novo chat neste projeto"
+    "newConversationInProject": "Novo chat neste projeto",
+    "deleting": "Excluindo..."
   },
   "historySearch": {
     "tooltip": "Pesquisar mensagens",
@@ -359,7 +360,8 @@
       "vscode": "VS Code",
       "terminal": "Terminal",
       "explorer": "Explorador de Arquivos"
-    }
+    },
+    "pasteConfirm_file_name": "Nome do arquivo"
   },
   "minimap": {
     "searchAria": "Pesquisar na conversa",
@@ -486,5 +488,6 @@
   "sendbox": {
     "hint": "Digite / para comandos, @ para referenciar arquivos"
   },
-  "notFound": "Conversa não encontrada ou foi deletada"
+  "notFound": "Conversa não encontrada ou foi deletada",
+  "context_usage.contextUsed": "contexto usado"
 }

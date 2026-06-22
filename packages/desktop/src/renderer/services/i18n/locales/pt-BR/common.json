@@ -115,5 +115,7 @@
   "unit": {
     "minute_short": "m",
     "second_short": "s"
-  }
+  },
+  "enabled": "Ativado",
+  "disabled": "Desativado"
 }
