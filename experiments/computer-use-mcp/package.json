@@ -1,0 +1,13 @@
+{
+  "name": "centaurai-computer-use-mcp",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "EXPERIMENTAL stdio MCP server giving an AI agent REAL screenshot/mouse/keyboard control of the local machine (single-machine computer-use).",
+  "bin": { "centaurai-computer-use-mcp": "server.mjs" },
+  "scripts": { "start": "node server.mjs" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@nut-tree-fork/nut-js": "^4.2.0"
+  }
+}
