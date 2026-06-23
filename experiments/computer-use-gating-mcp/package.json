@@ -1,0 +1,15 @@
+{
+  "name": "computer-use-gating-mcp",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "description": "P0.5 gating: minimal stdio MCP server returning a secret PNG to test whether the ACP CLI feeds MCP image results to the model as a real image block",
+  "bin": { "computer-use-gating-mcp": "server.mjs" },
+  "scripts": {
+    "start": "node server.mjs",
+    "gen-image": "NODE_PATH=../local-computer-use-spike/node_modules node gen-image.cjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}

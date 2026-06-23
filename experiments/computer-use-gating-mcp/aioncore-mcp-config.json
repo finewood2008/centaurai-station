@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "computeruse": {
+      "command": "/home/user/桌面/_仓库/AionCore/target/debug/aioncore",
+      "args": ["mcp-computeruse-stdio"]
+    }
+  }
+}

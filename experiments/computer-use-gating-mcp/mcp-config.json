@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "gating": {
+      "command": "node",
+      "args": ["/home/user/桌面/centaurai-aionui/experiments/computer-use-gating-mcp/server.mjs"]
+    }
+  }
+}

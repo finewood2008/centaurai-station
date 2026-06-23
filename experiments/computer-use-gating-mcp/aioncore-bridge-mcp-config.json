@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "computeruse": {
+      "command": "/home/user/桌面/_仓库/AionCore/target/debug/aioncore",
+      "args": ["mcp-computeruse-stdio"],
+      "env": {
+        "AION_COMPUTERUSE_PORT": "8731",
+        "AION_COMPUTERUSE_TOKEN": "test-token",
+        "AION_COMPUTERUSE_CONVERSATION_ID": "conv-e2e",
+        "AION_COMPUTERUSE_USER_ID": "user-e2e"
+      }
+    }
+  }
+}

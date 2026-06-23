@@ -1,0 +1,13 @@
+{
+  "name": "local-computer-use-spike",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Phase 0 spike: verify screenshot + mouse + keyboard via nut.js (Windows-first)",
+  "scripts": {
+    "spike": "node spike.mjs"
+  },
+  "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.0"
+  }
+}
