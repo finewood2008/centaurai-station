@@ -47,11 +47,9 @@ describe('workspaceMapper', () => {
     expect(file?.relativePath).toBe('README.md');
   });
 
-  // Regression guard: the Content Hub / RecentFiles tree walk reads camelCase
-  // (`isFile`/`isDir`/`fullPath`). If `ipcBridge.fs.getFilesByDir` ever loses its
-  // `withResponseMap(fromBackendDirOrFileList)` wrapper, `node.isFile` is
-  // `undefined` for every node, the walk collects zero files, and the hub renders
-  // empty. This has regressed twice — pin the mapping so a merge can't drop it again.
+  // Regression context: the Content Hub / RecentFiles tree walk reads camelCase
+  // (`isFile`/`isDir`/`fullPath`). This test verifies the mapper recursively
+  // normalizes the backend `/api/fs/dir` tree to the camelCase IDirOrFile shape.
   it('maps the /api/fs/dir tree from snake_case to camelCase, recursively', () => {
     const raw: RawDirOrFile[] = [
       {
