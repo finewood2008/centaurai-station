@@ -43,10 +43,11 @@
 | F-CU-00 | **gating 实测**:CLI 是否把 MCP image result 当 image block 喂模型 | ✅ PASS(Claude);Codex 大概率(待人工实证);Gemini 未装 | P0.5 |
 | F-CU-03a | **P2 骨架**:`mcp-computeruse-stdio` 子命令 + 注入 + get_screen 直返图 | ✅ 实装+编译+单测+端到端验证(AionCore exp/computer-use-mcp-skeleton) | P2 |
 | F-CU-03b | **P2 增量①**:get_screen 双模式 + loopback `/tool` 桥(subcommand 侧)+ 契约 | ✅ 8 单测(含 wiremock)+ 端到端(mock /tool + claude)验证 | P2 |
-| F-CU-03c | **P2 增量②**:aioncore 进程侧 `/tool` handler(路由到 owning client) | 待做(=缺口1/2/3,需起全 app) | P2 |
+| F-CU-03c | **P2 增量②**:aioncore 进程侧 `/tool` handler(路由到 owning client) | 进行中:缺口3 `PendingRequests` 原语 ✅(6单测,commit bb7f523);缺口1/2 + `/tool` server + 客户端接线待做(需起全 app) | P2 |
 | F-CU-01 | nut.js 截屏 + 键鼠注入可行性验证(Windows) | spike 已写,待 Windows 真测 | P0 |
 | F-CU-02 | Executor 模块:动作协议 + 调度/校验(core)| ✅ core 实装+13单测+tsc+lint 绿(packages/desktop/src/process/executor) | P1 |
 | F-CU-02b | 本机执行后端(nut.js ScreenController)| 参考实现已写(spike/NutScreenController.mjs,加载冒烟过);待 Windows 真机验证 + 加依赖移植入 src | P1 |
+| F-CU-09 | **单机可真用版**:独立 real computer-use MCP server(11 工具,真截屏+真键鼠)| ✅ 实装+MCP 冒烟(experiments/computer-use-mcp);已推 origin;⏳ Windows 真机由用户试 | — |
 | F-CU-03 | 反向通道:S3 stdio MCP shim + loopback `/tool` 桥 + 客户端 executor | 待做(已定路径) | P2/P3 |
 | F-CU-04 | aioncore session→conn 索引 + 真实 MessageRouter(替换 NoopMessageRouter) | 待做(**安全必修**,非便利) | P2 |
 | F-CU-05 | 模型接入:经 MCP 注入 computer-use 工具,CLI 子进程模型调用 | 待做(已定路径) | P3 |
