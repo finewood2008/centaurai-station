@@ -67,8 +67,9 @@
     "uncategorized": "未分类",
     "upload": "上传到共享库",
     "download": "下载",
-    "empty": "共享库为空",
-    "comingSoon": "共享库即将上线"
+    "empty": "还没有共享的产物。在会话里点「分享到团队」就会出现在这里。",
+    "comingSoon": "共享库即将上线",
+    "purpose": "团队共享的 AI 产物"
   },
   "toast": {
     "copied": "已复制",
@@ -124,6 +125,7 @@
     "saveHere": "保存到此处",
     "noSubfolders": "没有子文件夹",
     "savedToNas": "已保存到网盘",
-    "saveToNasFailed": "保存到网盘失败"
+    "saveToNasFailed": "保存到网盘失败",
+    "purpose": "公司共享磁盘 · 上传整理文件，可索引到知识库"
   }
 }

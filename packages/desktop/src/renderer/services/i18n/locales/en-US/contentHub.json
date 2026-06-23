@@ -67,8 +67,9 @@
     "uncategorized": "Uncategorized",
     "upload": "Upload to shared library",
     "download": "Download",
-    "empty": "Shared library is empty",
-    "comingSoon": "Shared library is coming soon"
+    "empty": "No shared artifacts yet. In a conversation, click \"Share to team\" to push outputs here.",
+    "comingSoon": "Shared library is coming soon",
+    "purpose": "AI artifacts shared with the team"
   },
   "toast": {
     "copied": "Copied",
@@ -124,6 +125,7 @@
     "saveHere": "Save here",
     "noSubfolders": "No subfolders",
     "savedToNas": "Saved to the network drive",
-    "saveToNasFailed": "Could not save to the network drive"
+    "saveToNasFailed": "Could not save to the network drive",
+    "purpose": "Company shared disk · upload & organize files, index to the knowledge base"
   }
 }
