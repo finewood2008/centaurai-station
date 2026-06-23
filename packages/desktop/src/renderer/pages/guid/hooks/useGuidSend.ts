@@ -125,7 +125,9 @@ export const useGuidSend = (deps: GuidSendDeps): GuidSendResult => {
     const isCustomWorkspace = !!dir;
     const finalWorkspace = dir || '';
 
-    // 向量知识库：勾选后才检索（与智囊团共用 retrieveKnowledgeContext）
+    // 向量知识库：勾选后才检索（与智囊团共用 retrieveKnowledgeContext）。
+    // enrichedInput 只用于发给模型的消息内容；会话标题(name)始终用原始 input，
+    // 避免每个对话标题都被「知识库检索结果」前缀污染（侧栏/内容中心都显示标题）。
     let enrichedInput = input;
     if (searchKnowledgeBase && input.trim()) {
       try {
@@ -189,7 +191,7 @@ export const useGuidSend = (deps: GuidSendDeps): GuidSendResult => {
       const nanobotAgentInfo = agentInfo || findAgentByKey(selectedAgentKey);
       const nanobotConversationParams = buildAgentConversationParams({
         backend: nanobotAgentInfo?.backend || 'nanobot',
-        name: enrichedInput,
+        name: input,
         agent_name: nanobotAgentInfo?.name,
         preset_assistant_id,
         workspace: finalWorkspace,
@@ -240,7 +242,7 @@ export const useGuidSend = (deps: GuidSendDeps): GuidSendResult => {
       try {
         const conversation = await ipcBridge.conversation.create.invoke({
           type: 'aionrs',
-          name: enrichedInput,
+          name: input,
           model: current_model,
           extra: {
             default_files: files,
@@ -307,7 +309,7 @@ export const useGuidSend = (deps: GuidSendDeps): GuidSendResult => {
       const agentBackend = acpBackend || selectedAgent;
       const agentConversationParams = buildAgentConversationParams({
         backend: agentBackend,
-        name: enrichedInput,
+        name: input,
         // For row-scoped rows (custom ACP / remote) the backend factory
         // needs the actual catalog id — `backend` collapses to the `custom`
         // slot so it cannot discriminate between rows on its own.
