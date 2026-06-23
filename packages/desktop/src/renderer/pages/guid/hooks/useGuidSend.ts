@@ -125,9 +125,9 @@ export const useGuidSend = (deps: GuidSendDeps): GuidSendResult => {
     const isCustomWorkspace = !!dir;
     const finalWorkspace = dir || '';
 
-    // 向量知识库：勾选后才检索（与智囊团共用 retrieveKnowledgeContext）。
-    // enrichedInput 只用于发给模型的消息内容；会话标题(name)始终用原始 input，
-    // 避免每个对话标题都被「知识库检索结果」前缀污染（侧栏/内容中心都显示标题）。
+    // Knowledge base: retrieve only when enabled (shared with TeamBrain via retrieveKnowledgeContext).
+    // `enrichedInput` is only used as the message content sent to the model; the conversation title (`name`)
+    // should always use the original `input` to avoid polluting titles with the retrieval prefix.
     let enrichedInput = input;
     if (searchKnowledgeBase && input.trim()) {
       try {
