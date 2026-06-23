@@ -5,6 +5,22 @@ export { startStaticServer, stopStaticServer } from './static-server.js';
 export type { StaticServerOptions, StaticServerHandle } from './static-server.js';
 export type { SharedFile, SharedCategory, SharedAddInput } from './shared-drive.js';
 export { sharedList, sharedCategories, sharedRemove, sharedBlobInfo, sharedAddFromPath } from './shared-drive.js';
+export type { NasEntry, NasListing, NasFileInfo, NasTrashEntry, NasWalkFile, NasIndexProgress } from './nas-drive.js';
+export {
+  nasList,
+  nasFileInfo,
+  resolveWithinRoot,
+  nasMkdir,
+  nasRemove,
+  nasMove,
+  nasUploadFromPath,
+  nasTrashList,
+  nasTrashRestore,
+  nasTrashRemove,
+  nasTrashEmpty,
+  nasWalk,
+  indexNasFolder,
+} from './nas-drive.js';
 
 // Backend launcher exports (M4)
 export {
@@ -60,6 +76,7 @@ export async function startWebHost(opts: WebHostOptions): Promise<WebHostHandle>
       allowRemote: opts.allowRemote ?? false,
       installerDir: opts.installerDir,
       sharedDriveDir: opts.sharedDriveDir,
+      nasRootDir: opts.nasRootDir,
     });
   } catch (err) {
     // If static-server fails, clean up backend

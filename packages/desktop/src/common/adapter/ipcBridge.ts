@@ -686,6 +686,71 @@ export const sharedDriveLocal = {
   ),
 };
 
+export type NasEntryDTO = {
+  name: string;
+  /** Path relative to the drive root, POSIX-separated. */
+  relPath: string;
+  isDir: boolean;
+  size: number;
+  modifiedAt: number;
+};
+
+export type NasListingDTO = {
+  path: string;
+  entries: NasEntryDTO[];
+  /** True when the admin has not configured a network-drive root. */
+  disabled: boolean;
+};
+
+// Main-process IPC for the enterprise network drive (read-only), used by the
+// ADMIN desktop renderer. Reads the local nasRootDir directly so browsing works
+// regardless of whether the WebUI server is running or LAN-exposed (in which
+// case the desktop renderer holds no gate cookie and the HTTP routes would 401).
+// Browser / distributed clients use the HTTP routes (/api/nas/*) instead.
+export const nasDriveLocal = {
+  list: bridge.buildProvider<NasListingDTO, { path?: string }>('nas-drive.list'),
+  fileInfo: bridge.buildProvider<{ path: string; name: string; mime: string; size: number } | null, { path: string }>(
+    'nas-drive.file-info'
+  ),
+  mkdir: bridge.buildProvider<{ relPath: string } | null, { path?: string; name: string }>('nas-drive.mkdir'),
+  remove: bridge.buildProvider<boolean, { path: string }>('nas-drive.remove'),
+  move: bridge.buildProvider<boolean, { from: string; to: string }>('nas-drive.move'),
+  uploadFromPath: bridge.buildProvider<{ relPath: string } | null, { path?: string; sourcePath: string; name: string }>(
+    'nas-drive.upload-from-path'
+  ),
+  // Recycle-folder management — admin desktop only (no HTTP route exists).
+  trashList: bridge.buildProvider<NasTrashEntryDTO[], void>('nas-drive.trash-list'),
+  trashRestore: bridge.buildProvider<{ relPath: string } | null, { trashName: string }>('nas-drive.trash-restore'),
+  trashRemove: bridge.buildProvider<boolean, { trashName: string }>('nas-drive.trash-remove'),
+  trashEmpty: bridge.buildProvider<boolean, void>('nas-drive.trash-empty'),
+  // Knowledge-base indexing — admin desktop only. indexFolder starts a job and
+  // returns its id; the renderer polls indexStatus until phase === 'done'.
+  indexFolder: bridge.buildProvider<{ jobId: string }, { path?: string; endpoint?: string; includeVideo?: boolean }>(
+    'nas-drive.index-folder'
+  ),
+  indexStatus: bridge.buildProvider<NasIndexProgressDTO | null, { jobId: string }>('nas-drive.index-status'),
+  indexCancel: bridge.buildProvider<boolean, { jobId: string }>('nas-drive.index-cancel'),
+};
+
+export type NasIndexProgressDTO = {
+  phase: 'walking' | 'indexing' | 'done' | 'error';
+  total: number;
+  done: number;
+  failed: number;
+  skipped: number;
+  pruned: number;
+  current?: string;
+  error?: string;
+};
+
+export type NasTrashEntryDTO = {
+  trashName: string;
+  originalName: string;
+  isDir: boolean;
+  size: number;
+  deletedAt: number;
+};
+
 // ---------------------------------------------------------------------------
 // Speech to Text — routed to backend
 // ---------------------------------------------------------------------------

@@ -20,18 +20,22 @@ import EmptyState from './components/EmptyState';
 import ShareToTeamModal from './components/ShareToTeamModal';
 import HubContextMenu, { type HubMenuState } from './components/HubContextMenu';
 import SharedLibraryPanel from './shared/SharedLibraryPanel';
+import NasPanel from './nas/NasPanel';
+import NasFolderPicker from './nas/NasFolderPicker';
 import KnowledgeBasePanel from './knowledge/KnowledgeBasePanel';
 import { useHubFiles } from './useHubFiles';
 import { useHubPreview } from './useHubPreview';
 import { useHubFileActions } from './useHubFileActions';
 import { useHubViewPrefs } from './useHubViewPrefs';
 import { shareToTeam, SHARED_DRIVE_UNAVAILABLE } from '@/renderer/services/SharedDriveService';
+import { isNasAdmin, saveToNas } from '@/renderer/services/NasService';
 import { getCurrentFrontendUserId } from '@/common/utils/frontendUserScope';
 import type { FileEntry, HubMineView, HubSection } from './types';
 
 /** Map the legacy ?tab= deep-link onto the new section + mine-view model. */
 const parseInitialTab = (value: string | null): { section: HubSection; mineView: HubMineView } => {
   if (value === 'shared') return { section: 'shared', mineView: 'all' };
+  if (value === 'nas') return { section: 'nas', mineView: 'all' };
   if (value === 'knowledge') return { section: 'knowledge', mineView: 'all' };
   if (value === 'byConversation') return { section: 'mine', mineView: 'byConversation' };
   if (value === 'byType') return { section: 'mine', mineView: 'byType' };
@@ -53,6 +57,23 @@ const ContentHubPage: React.FC = () => {
   const [shareTarget, setShareTarget] = useState<FileEntry | null>(null);
   const [sharing, setSharing] = useState(false);
   const [menu, setMenu] = useState<HubMenuState>(null);
+  const [nasTarget, setNasTarget] = useState<FileEntry | null>(null);
+  const [savingToNas, setSavingToNas] = useState(false);
+  const nasAdmin = isNasAdmin();
+
+  const handleSaveToNas = async (destRel: string) => {
+    if (!nasTarget) return;
+    setSavingToNas(true);
+    try {
+      await saveToNas(nasTarget.path, destRel, nasTarget.name);
+      Message.success(t('contentHub.nas.savedToNas'));
+      setNasTarget(null);
+    } catch {
+      Message.error(t('contentHub.nas.saveToNasFailed'));
+    } finally {
+      setSavingToNas(false);
+    }
+  };
 
   const openMenu = (file: FileEntry, e: React.MouseEvent) => {
     e.preventDefault();
@@ -153,6 +174,7 @@ const ContentHubPage: React.FC = () => {
 
   const renderBody = () => {
     if (section === 'shared') return <SharedLibraryPanel search={search} />;
+    if (section === 'nas') return <NasPanel search={search} />;
     if (section === 'knowledge') return <KnowledgeBasePanel search={search} />;
     return renderMine();
   };
@@ -172,10 +194,17 @@ const ContentHubPage: React.FC = () => {
         state={menu}
         onOpen={preview}
         onShare={setShareTarget}
+        onSaveToNas={nasAdmin ? setNasTarget : undefined}
         onCopyPath={(f) => void actions.copyPath(f)}
         onDownload={(f) => void actions.download(f)}
         onReveal={(f) => void actions.reveal(f)}
         onClose={() => setMenu(null)}
+      />
+      <NasFolderPicker
+        visible={!!nasTarget}
+        loading={savingToNas}
+        onPick={(rel) => void handleSaveToNas(rel)}
+        onCancel={() => setNasTarget(null)}
       />
     </div>
   );
