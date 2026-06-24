@@ -187,11 +187,12 @@ export async function uploadNasFiles(parentRel: string, files: File[]): Promise<
     try {
       const localPath = isAdminElectron() ? localPathOf(file) : undefined;
       if (localPath) {
-        await ipcBridge.nasDriveLocal.uploadFromPath.invoke({
+        const r = await ipcBridge.nasDriveLocal.uploadFromPath.invoke({
           path: parentRel,
           sourcePath: localPath,
           name: file.name,
         });
+        if (!r) throw new Error('NAS_UPLOAD_FAILED');
         continue;
       }
       const base = await resolveBase();
