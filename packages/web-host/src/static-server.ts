@@ -54,7 +54,7 @@ export type StaticServerOptions = {
   sharedDriveDir?: string;
   /**
    * Root of the enterprise LAN network drive (the company's large shared disk),
-   * browsed read-only at /api/nas/*. Omit to disable (list returns []).
+   * browsed and managed at /api/nas/*. Omit to disable (list returns []).
    */
   nasRootDir?: string;
 };
