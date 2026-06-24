@@ -35,6 +35,7 @@ export function useNas() {
       setUnavailable(false);
     } catch {
       setEntries([]);
+      setDisabled(false);
       setUnavailable(true);
     } finally {
       setLoading(false);
