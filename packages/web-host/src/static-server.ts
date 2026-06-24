@@ -513,7 +513,7 @@ export async function startStaticServer(opts: StaticServerOptions): Promise<Stat
         return;
       }
 
-      // /api/nas/* — enterprise LAN network drive (read-only), served LOCALLY
+      // /api/nas/* — enterprise LAN network drive (read + write), served LOCALLY
       // (NOT proxied to aioncore). Must come before the generic /api/* proxy.
       if (req.url.startsWith('/api/nas/')) {
         if (req.url.startsWith('/api/nas/list')) await handleNasList(req, res, opts.nasRootDir);
