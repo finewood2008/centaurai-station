@@ -54,8 +54,10 @@ interface AutoUpdateCheckParams {
   includePrerelease?: boolean;
 }
 
-const DEFAULT_REPO = 'iOfficeAI/AionUi';
-const DEFAULT_USER_AGENT = 'AionUi';
+const DEFAULT_REPO = 'finewood2008/centaurai-station';
+const DEFAULT_USER_AGENT = 'CentaurAI-Station';
+const CANONICAL_GITHUB_REPO = 'finewood2008/centaurai-station';
+const LEGACY_GITHUB_REPOS = ['finewood2008/centaurai-aionui', 'iOfficeAI/AionUi'];
 const ALLOWED_ASSET_EXTS = new Set(['.exe', '.msi', '.dmg', '.zip', '.deb', '.rpm']);
 const CDN_HOST = 'static.aionui.com';
 const CDN_BASE_URL = `https://${CDN_HOST}/releases`;
@@ -88,6 +90,17 @@ const normalizeTagToSemver = (tag: string): string | null => {
  */
 const rewriteAssetUrlToCDN = (assetName: string, version: string): string => {
   return `${CDN_BASE_URL}/${version}/${assetName}`;
+};
+
+const rewriteRepoUrlsToCanonical = (text?: string): string | undefined => {
+  if (!text) return text;
+
+  return LEGACY_GITHUB_REPOS.reduce((result, legacyRepo) => {
+    return result.replaceAll(
+      `https://github.com/${legacyRepo}`,
+      `https://github.com/${CANONICAL_GITHUB_REPO}`
+    );
+  }, text);
 };
 
 const mapAsset = (asset: GitHubReleaseApiAsset, version: string): GitHubReleaseAsset => ({
@@ -193,7 +206,7 @@ export const pickRecommendedAsset = (
 };
 
 const resolveRepo = (requestRepo?: string): string => {
-  const envRepo = process.env.AIONUI_GITHUB_REPO?.trim();
+  const envRepo = process.env.CENTAURAI_GITHUB_REPO?.trim() || process.env.AIONUI_GITHUB_REPO?.trim();
   const repo = (requestRepo || envRepo || DEFAULT_REPO).trim();
   return repo || DEFAULT_REPO;
 };
@@ -291,8 +304,8 @@ const mapRelease = (rel: GitHubReleaseApi): UpdateReleaseInfo | null => {
     tagName: rel.tag_name,
     version,
     name: rel.name,
-    body: rel.body,
-    htmlUrl: rel.html_url,
+    body: rewriteRepoUrlsToCanonical(rel.body),
+    htmlUrl: rewriteRepoUrlsToCanonical(rel.html_url) || rel.html_url,
     publishedAt: rel.published_at,
     prerelease: Boolean(rel.prerelease),
     draft: Boolean(rel.draft),
@@ -514,7 +527,10 @@ export function createAutoUpdateStatusBroadcast(): (
   status: import('../services/autoUpdaterService').AutoUpdateStatus
 ) => void {
   return (status) => {
-    ipcBridge.autoUpdate.status.emit(status);
+    ipcBridge.autoUpdate.status.emit({
+      ...status,
+      releaseNotes: rewriteRepoUrlsToCanonical(status.releaseNotes),
+    });
   };
 }
 
@@ -634,8 +650,9 @@ export function initUpdateBridge(): void {
               updateInfo: {
                 version: result.updateInfo.version,
                 releaseDate: result.updateInfo.releaseDate,
-                releaseNotes:
-                  typeof result.updateInfo.releaseNotes === 'string' ? result.updateInfo.releaseNotes : undefined,
+                releaseNotes: rewriteRepoUrlsToCanonical(
+                  typeof result.updateInfo.releaseNotes === 'string' ? result.updateInfo.releaseNotes : undefined
+                ),
               },
             },
           };
