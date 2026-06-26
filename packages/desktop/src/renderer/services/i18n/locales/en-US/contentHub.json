@@ -11,7 +11,8 @@
     "byConversation": "By Conversation",
     "byType": "By Type",
     "shared": "Shared Library",
-    "knowledge": "Knowledge Base"
+    "knowledge": "Knowledge Base",
+    "nas": "Network Drive"
   },
   "mineView": {
     "all": "All",
@@ -45,7 +46,8 @@
     "copyPath": "Copy path",
     "download": "Download",
     "showInFolder": "Show in folder",
-    "shareToTeam": "Share to team"
+    "shareToTeam": "Share to team",
+    "saveToNas": "Save to network drive"
   },
   "share": {
     "uploading": "Sharing...",
@@ -65,13 +67,65 @@
     "uncategorized": "Uncategorized",
     "upload": "Upload to shared library",
     "download": "Download",
-    "empty": "Shared library is empty",
-    "comingSoon": "Shared library is coming soon"
+    "empty": "No shared artifacts yet. In a conversation, click \"Share to team\" to push outputs here.",
+    "comingSoon": "Shared library is coming soon",
+    "purpose": "AI artifacts shared with the team"
   },
   "toast": {
     "copied": "Copied",
     "copyFailed": "Copy failed",
     "downloadFailed": "Download failed",
     "openFailed": "Cannot open"
+  },
+  "nas": {
+    "root": "All Files",
+    "empty": "This folder is empty",
+    "loading": "Loading…",
+    "disabled": "No shared disk has been configured by the administrator yet",
+    "unavailable": "Network drive unavailable — the WebUI server is not running",
+    "refresh": "Refresh",
+    "download": "Download",
+    "colName": "Name",
+    "colSize": "Size",
+    "colModified": "Modified",
+    "upload": "Upload",
+    "newFolder": "New Folder",
+    "rename": "Rename",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "deleteConfirm": "Delete \"{{name}}\"? It will be moved to the recycle folder.",
+    "uploadDone": "Upload complete",
+    "uploadFailed": "Upload failed",
+    "mkdirFailed": "Could not create folder",
+    "renameFailed": "Rename failed",
+    "deleteFailed": "Delete failed",
+    "dropHere": "Drop files to upload",
+    "renameTitle": "Rename",
+    "newFolderTitle": "New Folder",
+    "namePlaceholder": "Enter a name",
+    "trash": "Recycle Bin",
+    "emptyTrash": "Empty Recycle Bin",
+    "emptyConfirm": "Permanently delete everything in the recycle bin? This cannot be undone.",
+    "restore": "Restore",
+    "restoreFailed": "Restore failed",
+    "purge": "Delete permanently",
+    "purgeConfirm": "Permanently delete \"{{name}}\"? This cannot be undone.",
+    "trashEmpty": "The recycle bin is empty",
+    "deletedAt": "Deleted",
+    "index": "Index to KB",
+    "indexTitle": "Index folder to knowledge base",
+    "indexDesc": "Recursively index supported files under \"{{folder}}\" into the knowledge base so they become searchable. Re-running is safe (unchanged files are skipped).",
+    "indexVideo": "Include videos (slow: transcription + OCR)",
+    "indexScanning": "Scanning folder…",
+    "indexProgress": "Indexing to knowledge base… {{done}}/{{total}} (skipped {{skipped}}, failed {{failed}})",
+    "indexDone": "Indexing complete: {{done}} indexed, {{skipped}} skipped, {{failed}} failed",
+    "indexFailed": "Indexing failed",
+    "pickFolderTitle": "Choose a network-drive folder",
+    "saveHere": "Save here",
+    "noSubfolders": "No subfolders",
+    "savedToNas": "Saved to the network drive",
+    "saveToNasFailed": "Could not save to the network drive",
+    "purpose": "Company shared disk · upload & organize files, index to the knowledge base"
   }
 }

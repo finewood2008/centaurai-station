@@ -11,7 +11,8 @@
     "byConversation": "按会话",
     "byType": "按类型",
     "shared": "共享库",
-    "knowledge": "知识库"
+    "knowledge": "知识库",
+    "nas": "网盘"
   },
   "mineView": {
     "all": "全部",
@@ -45,7 +46,8 @@
     "copyPath": "复制路径",
     "download": "下载",
     "showInFolder": "在文件夹中显示",
-    "shareToTeam": "共享到团队"
+    "shareToTeam": "共享到团队",
+    "saveToNas": "另存到网盘"
   },
   "share": {
     "uploading": "正在共享...",
@@ -65,13 +67,65 @@
     "uncategorized": "未分类",
     "upload": "上传到共享库",
     "download": "下载",
-    "empty": "共享库为空",
-    "comingSoon": "共享库即将上线"
+    "empty": "还没有共享的产物。在会话里点「分享到团队」就会出现在这里。",
+    "comingSoon": "共享库即将上线",
+    "purpose": "团队共享的 AI 产物"
   },
   "toast": {
     "copied": "已复制",
     "copyFailed": "复制失败",
     "downloadFailed": "下载失败",
     "openFailed": "无法打开"
+  },
+  "nas": {
+    "root": "全部文件",
+    "empty": "此文件夹为空",
+    "loading": "加载中…",
+    "disabled": "管理员尚未配置共享磁盘",
+    "unavailable": "网盘不可用 —— WebUI 服务未运行",
+    "refresh": "刷新",
+    "download": "下载",
+    "colName": "名称",
+    "colSize": "大小",
+    "colModified": "修改时间",
+    "upload": "上传",
+    "newFolder": "新建文件夹",
+    "rename": "重命名",
+    "delete": "删除",
+    "cancel": "取消",
+    "ok": "确定",
+    "deleteConfirm": "删除「{{name}}」？将移入回收文件夹，可恢复。",
+    "uploadDone": "上传完成",
+    "uploadFailed": "上传失败",
+    "mkdirFailed": "新建文件夹失败",
+    "renameFailed": "重命名失败",
+    "deleteFailed": "删除失败",
+    "dropHere": "拖放文件到此上传",
+    "renameTitle": "重命名",
+    "newFolderTitle": "新建文件夹",
+    "namePlaceholder": "请输入名称",
+    "trash": "回收站",
+    "emptyTrash": "清空回收站",
+    "emptyConfirm": "永久删除回收站内全部内容？此操作不可恢复。",
+    "restore": "恢复",
+    "restoreFailed": "恢复失败",
+    "purge": "彻底删除",
+    "purgeConfirm": "永久删除「{{name}}」？此操作不可恢复。",
+    "trashEmpty": "回收站为空",
+    "deletedAt": "删除时间",
+    "index": "索引到知识库",
+    "indexTitle": "把文件夹索引到知识库",
+    "indexDesc": "递归索引「{{folder}}」下的可识别文件到知识库，使其可被检索。重复执行是安全的（未变更的文件会跳过）。",
+    "indexVideo": "包含视频（较慢：转写 + OCR）",
+    "indexScanning": "正在扫描文件夹…",
+    "indexProgress": "正在索引到知识库… {{done}}/{{total}}（跳过 {{skipped}}，失败 {{failed}}）",
+    "indexDone": "索引完成：成功 {{done}}，跳过 {{skipped}}，失败 {{failed}}",
+    "indexFailed": "索引失败",
+    "pickFolderTitle": "选择网盘目标文件夹",
+    "saveHere": "保存到此处",
+    "noSubfolders": "没有子文件夹",
+    "savedToNas": "已保存到网盘",
+    "saveToNasFailed": "保存到网盘失败",
+    "purpose": "公司共享磁盘 · 上传整理文件，可索引到知识库"
   }
 }

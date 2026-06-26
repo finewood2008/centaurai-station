@@ -89,7 +89,8 @@ const SharedLibraryPanel: React.FC<SharedLibraryPanelProps> = ({ search = '' }) 
       <CategorySidebar categories={categories} total={total} selected={category} onSelect={setCategory} />
       <div className='flex-1 flex flex-col min-w-0'>
         <div className='flex items-center gap-8px px-16px py-8px shrink-0'>
-          <span className='text-11px text-t-secondary'>{t('contentHub.shared.allVisible')}</span>
+          <span className='text-12px text-t-primary'>{t('contentHub.shared.purpose')}</span>
+          <span className='text-11px text-t-tertiary'>· {t('contentHub.shared.allVisible')}</span>
           <div className='flex-1' />
           <ViewControls view={view} size={size} onViewChange={setView} onSizeChange={setSize} />
         </div>
