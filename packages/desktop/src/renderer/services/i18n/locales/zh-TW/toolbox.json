@@ -3,7 +3,7 @@
   "subtitle": "常用圖片 AI 工作流，填寫表單即可生成圖片、海報、證件照和商品圖。",
   "workbench": {
     "title": "AI 工作台",
-    "subtitle": "把常用 AI 能力按業務場景整理成工作台，目前包含圖片工作台和香港報稅工作台。",
+    "subtitle": "把常用 AI 能力按業務場景整理成工作台，目前包含圖片工作台和影片工作台。",
     "searchPlaceholder": "搜尋工作台或工具",
     "empty": "沒有符合目前篩選條件的工作台或工具。"
   },
@@ -365,5 +365,21 @@
   },
   "imageModel": "圖像模型",
   "imageModelUnset": "未設定",
-  "imageModelPlaceholder": "選擇圖像模型"
+  "imageModelPlaceholder": "選擇圖像模型",
+  "videoWorkbench": {
+    "title": "半人馬AI視訊工作台",
+    "subtitle": "本地優先的瀏覽器影片編輯器 —— 匯入素材、時間軸剪輯、GPU 合成、匯出 MP4/WebM,全程在本機完成。",
+    "cardDesc": "半人馬自有的影片剪輯工作台:匯入片段、時間軸編輯、加特效並匯出,全部本地執行。",
+    "starting": "正在啟動視訊工作台…",
+    "startFailed": "無法連接視訊工作台,請確認本地影片服務已啟動。",
+    "retry": "重試",
+    "category": "視訊工作台"
+  },
+  "videoAgent": {
+    "title": "AI 助手",
+    "agent": "智能體",
+    "placeholder": "告訴 AI 你想怎麼剪…",
+    "empty": "選一個智能體,用自然語言描述剪輯需求,它會直接操作時間軸。",
+    "thinking": "處理中…"
+  }
 }

@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Alert, Button, Empty, Input } from '@arco-design/web-react';
+import { Alert, Button, Empty, Input, Spin } from '@arco-design/web-react';
 import {
   ArrowRight,
   Avatar,
   BookOne,
   Bowl,
+  EditMovie,
   IdCard,
   Left,
   Magic,
@@ -25,7 +26,11 @@ import {
 } from '@icon-park/react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ipcBridge } from '@/common';
+import WebviewHost, { type WebviewControl } from '@/renderer/components/media/WebviewHost';
+import { isElectronDesktop } from '@/renderer/utils/platform';
+import VideoAgentChat from './video-agent/VideoAgentChat';
 import { useAgents } from '@/renderer/hooks/agent/useAgents';
 import type { AgentMetadata } from '@/renderer/utils/model/agentTypes';
 import { ResultPanel } from './components/ResultPanel';
@@ -65,6 +70,23 @@ type ToolboxPageProps = {
 
 const getToolTitle = (tool: ToolDef, t: (key: string) => string) => tool.titleText ?? t(tool.titleKey);
 const getToolDesc = (tool: ToolDef, t: (key: string) => string) => tool.descText ?? t(tool.descKey);
+
+const IMAGE2_WORKBENCH_PROFILE = {
+  profileName: 'TokenClub Image2',
+  apiUrl: 'centaur-image-workbench://app/__tokenclub/v1',
+  model: 'gpt-image-2',
+  apiMode: 'images',
+  streamImages: 'false',
+  streamPartialImages: '0',
+  disableServiceWorker: 'true',
+} as const;
+
+const addImage2WorkbenchProfile = (url: URL): URL => {
+  for (const [key, value] of Object.entries(IMAGE2_WORKBENCH_PROFILE)) {
+    url.searchParams.set(key, value);
+  }
+  return url;
+};
 
 /** Warm-domain tone palette (clay / gold / green / deep-clay) per BRAND_GUIDE.md. */
 type Tone = { surface: string; icon: string; rail: string; dot: string };
@@ -277,40 +299,52 @@ const WorkbenchCard: React.FC<{
   </Button>
 );
 
+/**
+ * Local Centaur Video Workbench server origin. Served by the desktop launcher
+ * or `bun run dev` in the opencut-classic project; embedded via WebviewHost.
+ */
+// opencut runs under a Next basePath so one instance serves both the desktop
+// <webview> and the LAN reverse proxy. In a browser, WebviewHost rewrites this
+// localhost URL to the same-origin /workbench/video route.
+const VIDEO_WORKBENCH_URL = 'http://localhost:3000/workbench/video/projects';
+
 /** Common AI Toolbox — a grid of practical, form-driven AI tools. */
 const ToolboxPage: React.FC<ToolboxPageProps> = ({ mode = 'toolbox' }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { agents } = useAgents();
   const { status, result, error, run, reset } = useToolboxRun();
   const isWorkbenchMode = mode === 'workbench';
+  // Deep-link target (?app=image) — the sider 「AI工作台」 entry opens the
+  // embedded 半人马 AI 图形工作台 directly instead of the workbench hub.
+  const deepLinkImage = isWorkbenchMode && searchParams.get('app') === 'image';
 
   const tools = useToolboxTools();
   const imageTools = useMemo(() => tools.filter((tool) => tool.category === 'image'), [tools]);
   const workbenchTools = useMemo(() => tools.filter((tool) => tool.category === 'workbench'), [tools]);
   const visibleTools = isWorkbenchMode ? workbenchTools : imageTools;
   const [activeTool, setActiveTool] = useState<ToolDef | null>(null);
-  const [imageWorkbenchOpen, setImageWorkbenchOpen] = useState(!isWorkbenchMode);
-  const [activeImageToolId, setActiveImageToolId] = useState<string>('');
+  const [imageWorkbenchOpen, setImageWorkbenchOpen] = useState(!isWorkbenchMode || deepLinkImage);
+  const [videoWorkbenchOpen, setVideoWorkbenchOpen] = useState(false);
+  const [videoServer, setVideoServer] = useState<{ state: 'starting' | 'ready' | 'error'; error?: string }>({
+    state: 'starting',
+  });
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<ToolboxCategory>('all');
   const lastRunRef = useRef<LastRun | null>(null);
+  const videoControlRef = useRef<WebviewControl | null>(null);
 
   useEffect(() => {
-    setImageWorkbenchOpen(!isWorkbenchMode);
-  }, [isWorkbenchMode]);
+    setImageWorkbenchOpen(!isWorkbenchMode || deepLinkImage);
+  }, [isWorkbenchMode, deepLinkImage]);
 
-  useEffect(() => {
-    if (imageTools.length === 0) {
-      setActiveImageToolId('');
-      return;
-    }
-    if (!activeImageToolId || !imageTools.some((tool) => tool.id === activeImageToolId)) {
-      setActiveImageToolId(imageTools[0].id);
-    }
-  }, [activeImageToolId, imageTools]);
-
-  const activeImageTool = imageTools.find((tool) => tool.id === activeImageToolId) ?? imageTools[0] ?? null;
+  // Embedded 半人马 AI 图形工作台. Use a main-process protocol so the workbench
+  // does not depend on the renderer dev-server port.
+  const workbenchUrl = useMemo(() => {
+    const url = new URL('centaur-image-workbench://app/index.html');
+    return addImage2WorkbenchProfile(url).toString();
+  }, []);
 
   const keyword = query.trim().toLowerCase();
   const imageWorkbenchMatches =
@@ -320,6 +354,13 @@ const ToolboxPage: React.FC<ToolboxPageProps> = ({ mode = 'toolbox' }) => {
       .toLowerCase()
       .includes(keyword);
   const showImageWorkbenchCard = isWorkbenchMode && category !== 'workbench' && imageWorkbenchMatches;
+  const videoWorkbenchMatches =
+    !keyword ||
+    [t('toolbox.videoWorkbench.title'), t('toolbox.videoWorkbench.cardDesc'), t('toolbox.videoWorkbench.subtitle')]
+      .join(' ')
+      .toLowerCase()
+      .includes(keyword);
+  const showVideoWorkbenchCard = isWorkbenchMode && category !== 'workbench' && videoWorkbenchMatches;
 
   const filteredTools = visibleTools.filter((tool) => {
     if (category !== 'all' && tool.category !== category) return false;
@@ -443,14 +484,49 @@ const ToolboxPage: React.FC<ToolboxPageProps> = ({ mode = 'toolbox' }) => {
     setImageWorkbenchOpen(false);
   }, [reset]);
 
-  const selectImageTool = useCallback(
-    (toolId: string) => {
-      reset();
-      lastRunRef.current = null;
-      setActiveImageToolId(toolId);
-    },
-    [reset]
-  );
+  const startVideoServer = useCallback(() => {
+    // Browser/LAN users can't start the host server over IPC — the host keeps
+    // opencut running and the WebUI reverse-proxies it. Probe its health first so
+    // a stopped host surfaces the card's error state instead of a raw 502 inside
+    // the iframe.
+    if (!isElectronDesktop()) {
+      setVideoServer({ state: 'starting' });
+      void fetch('/workbench/video/api/health')
+        .then((r) =>
+          setVideoServer(
+            r.ok ? { state: 'ready' } : { state: 'error', error: 'Video workbench is not available on the server' }
+          )
+        )
+        .catch(() => setVideoServer({ state: 'error', error: 'Video workbench is not available on the server' }));
+      return;
+    }
+    setVideoServer({ state: 'starting' });
+    void ipcBridge.videostudio.start
+      .invoke()
+      .then((videoStatus) => {
+        setVideoServer(videoStatus.running ? { state: 'ready' } : { state: 'error', error: videoStatus.error });
+      })
+      .catch((err: unknown) => {
+        setVideoServer({ state: 'error', error: err instanceof Error ? err.message : String(err) });
+      });
+  }, []);
+
+  const openVideoWorkbench = useCallback(() => {
+    reset();
+    lastRunRef.current = null;
+    setVideoWorkbenchOpen(true);
+    startVideoServer();
+  }, [reset, startVideoServer]);
+
+  const closeVideoWorkbench = useCallback(() => {
+    reset();
+    lastRunRef.current = null;
+    setVideoWorkbenchOpen(false);
+    // Stop the spawned opencut dev server so it doesn't keep running in the
+    // background. No-op for a reused/standalone server (only our spawned child
+    // is killed; a reused server leaves `child` null in videostudioBridge).
+    void ipcBridge.videostudio.stop.invoke();
+  }, [reset]);
 
   const handleRun = useCallback(
     (tool: ToolDef, agent: AgentMetadata | null, values: ToolFormValues) => {
@@ -473,23 +549,8 @@ const ToolboxPage: React.FC<ToolboxPageProps> = ({ mode = 'toolbox' }) => {
   );
 
   const renderImageWorkbench = () => {
-    const imageReadiness = activeImageTool ? checkToolReadiness(activeImageTool) : null;
-    const imageToolReady = !imageReadiness || imageReadiness.ready;
-    const imageReadinessAlert =
-      imageReadiness && imageReadiness.ready === false ? (
-        <Alert
-          type='warning'
-          content={t(imageReadiness.reasonKey)}
-          action={
-            <Button size='mini' type='text' onClick={() => void navigate(imageReadiness.settingsRoute)}>
-              {t('toolbox.goToSettings')}
-            </Button>
-          }
-        />
-      ) : null;
-
     return (
-      <>
+      <div className='flex flex-col gap-16px'>
         <div className='flex flex-col gap-16px lg:flex-row lg:items-end lg:justify-between'>
           <div className='flex min-w-0 items-start gap-14px'>
             {isWorkbenchMode && (
@@ -510,88 +571,93 @@ const ToolboxPage: React.FC<ToolboxPageProps> = ({ mode = 'toolbox' }) => {
           </div>
         </div>
 
-        <div className='centaur-card p-14px' style={{ borderRadius: 'var(--centaur-radius-sm)' }}>
-          <div className='flex flex-wrap items-center gap-8px'>
-            {imageTools.map((tool) => {
-              const active = activeImageTool?.id === tool.id;
-              return (
-                <Button
-                  key={tool.id}
-                  size='small'
-                  type={active ? 'primary' : 'text'}
-                  className='!rounded-full !px-14px'
-                  style={
-                    active
-                      ? { boxShadow: 'var(--centaur-shadow-clay)' }
-                      : {
-                          background: 'var(--centaur-bg-warm)',
-                          color: 'var(--centaur-ink-soft)',
-                          border: '1px solid var(--centaur-line)',
-                        }
-                  }
-                  onClick={() => selectImageTool(tool.id)}
-                >
-                  {getToolTitle(tool, t)}
-                </Button>
-              );
-            })}
+        <div
+          className='centaur-card relative w-full overflow-hidden'
+          style={{ height: '78vh', minHeight: 520, padding: 0, borderRadius: 'var(--centaur-radius-sm)' }}
+        >
+          <WebviewHost
+            url={workbenchUrl}
+            id='centaur-image-workbench'
+            partition='persist:centaur-image-workbench'
+            className='h-full w-full'
+            style={{ height: '100%', minHeight: 520 }}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const renderVideoWorkbench = () => {
+    return (
+      <div className='flex flex-col gap-16px'>
+        <div className='flex flex-col gap-16px lg:flex-row lg:items-end lg:justify-between'>
+          <div className='flex min-w-0 items-start gap-14px'>
+            {isWorkbenchMode && (
+              <Button className='mt-5px' shape='circle' icon={<Left />} onClick={closeVideoWorkbench} />
+            )}
+            <div className='centaur-mark h-52px w-52px shrink-0'>
+              <EditMovie size={26} />
+            </div>
+            <div className='min-w-0'>
+              <div className='centaur-eyebrow'>CENTAUR · VIDEO WORKBENCH</div>
+              <div className='mt-2px text-26px font-900 leading-32px' style={{ color: 'var(--centaur-ink)' }}>
+                {t('toolbox.videoWorkbench.title')}
+              </div>
+              <div className='mt-5px max-w-760px text-14px leading-21px' style={{ color: 'var(--centaur-ink-soft)' }}>
+                {t('toolbox.videoWorkbench.subtitle')}
+              </div>
+            </div>
           </div>
         </div>
 
-        {activeImageTool ? (
-          <>
-            <div className='centaur-card p-16px' style={{ borderRadius: 'var(--centaur-radius-sm)' }}>
-              <div className='flex min-w-0 items-center gap-12px'>
-                <div
-                  className='flex h-44px w-44px shrink-0 items-center justify-center rounded-14px'
-                  style={{ background: 'var(--centaur-gold-tint)', color: 'var(--centaur-gold-deep)' }}
-                >
-                  <ToolIcon name={activeImageTool.icon} size={22} />
-                </div>
-                <div className='min-w-0'>
-                  <div className='truncate text-18px font-700 leading-24px' style={{ color: 'var(--centaur-ink)' }}>
-                    {getToolTitle(activeImageTool, t)}
+        <div
+          className='centaur-card relative w-full overflow-hidden'
+          style={{ height: '78vh', minHeight: 520, padding: 0, borderRadius: 'var(--centaur-radius-sm)' }}
+        >
+          {videoServer.state === 'ready' ? (
+            <WebviewHost
+              url={VIDEO_WORKBENCH_URL}
+              id='centaur-video-workbench'
+              partition='persist:centaur-video-workbench'
+              controlRef={videoControlRef}
+              className='h-full w-full'
+              style={{ height: '100%', minHeight: 520 }}
+            />
+          ) : (
+            <div
+              className='flex h-full w-full flex-col items-center justify-center gap-12px'
+              style={{ minHeight: 520 }}
+            >
+              {videoServer.state === 'starting' ? (
+                <>
+                  <Spin size={28} />
+                  <div className='text-14px' style={{ color: 'var(--centaur-ink-soft)' }}>
+                    {t('toolbox.videoWorkbench.starting')}
                   </div>
-                  <div className='mt-3px text-13px leading-20px' style={{ color: 'var(--centaur-ink-soft)' }}>
-                    {getToolDesc(activeImageTool, t)}
+                </>
+              ) : (
+                <>
+                  <div className='max-w-420px text-center text-14px' style={{ color: 'var(--centaur-ink-soft)' }}>
+                    {t('toolbox.videoWorkbench.startFailed')}
                   </div>
-                </div>
-              </div>
+                  <Button onClick={startVideoServer}>{t('toolbox.videoWorkbench.retry')}</Button>
+                </>
+              )}
             </div>
-            {imageReadinessAlert}
-            <div className='grid grid-cols-1 gap-20px lg:grid-cols-[400px_minmax(0,1fr)] lg:items-start'>
-              <div className='w-full'>
-                <ToolForm
-                  key={activeImageTool.id}
-                  tool={activeImageTool}
-                  agents={agents}
-                  running={status === 'running'}
-                  disabled={!imageToolReady}
-                  onRun={handleRun}
-                />
-              </div>
-              <ResultPanel
-                status={status}
-                result={result}
-                error={error}
-                onOpenConversation={handleOpenConversation}
-                onRegenerate={handleRegenerate}
-              />
-            </div>
-          </>
-        ) : (
-          <div className='centaur-card py-44px'>
-            <Empty description={t('toolbox.imageWorkbench.empty')} />
-          </div>
-        )}
-      </>
+          )}
+          {/* Floating, collapsible AI assistant — overlays the editor, does not resize it. */}
+          <VideoAgentChat control={videoControlRef} />
+        </div>
+      </div>
     );
   };
 
   return (
     <div className='centaur-brand w-full min-h-full box-border overflow-y-auto'>
       <div className='mx-auto flex w-full max-w-1280px box-border flex-col gap-20px p-24px'>
-        {imageWorkbenchOpen ? (
+        {videoWorkbenchOpen ? (
+          renderVideoWorkbench()
+        ) : imageWorkbenchOpen ? (
           renderImageWorkbench()
         ) : !activeTool ? (
           <>
@@ -672,7 +738,7 @@ const ToolboxPage: React.FC<ToolboxPageProps> = ({ mode = 'toolbox' }) => {
               })}
             </div>
 
-            {showImageWorkbenchCard || filteredTools.length > 0 ? (
+            {showImageWorkbenchCard || showVideoWorkbenchCard || filteredTools.length > 0 ? (
               <div className='grid grid-cols-1 gap-16px md:grid-cols-2 xl:grid-cols-3'>
                 {showImageWorkbenchCard && (
                   <WorkbenchCard
@@ -687,6 +753,16 @@ const ToolboxPage: React.FC<ToolboxPageProps> = ({ mode = 'toolbox' }) => {
                       t('toolbox.tools.product.title'),
                     ]}
                     onOpen={openImageWorkbench}
+                  />
+                )}
+                {showVideoWorkbenchCard && (
+                  <WorkbenchCard
+                    title={t('toolbox.videoWorkbench.title')}
+                    desc={t('toolbox.videoWorkbench.cardDesc')}
+                    icon={<EditMovie size={24} />}
+                    meta={t('toolbox.videoWorkbench.category')}
+                    chips={[]}
+                    onOpen={openVideoWorkbench}
                   />
                 )}
                 {filteredTools.map((tool) => (

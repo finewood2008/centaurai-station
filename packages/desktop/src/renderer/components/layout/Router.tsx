@@ -24,15 +24,30 @@ const ComponentsShowcase = React.lazy(() => import('@renderer/pages/TestShowcase
 const ScheduledTasksPage = React.lazy(() => import('@renderer/pages/cron/ScheduledTasksPage'));
 const TaskDetailPage = React.lazy(() => import('@renderer/pages/cron/ScheduledTasksPage/TaskDetailPage'));
 const TeamIndex = React.lazy(() => import('@renderer/pages/team'));
-const ToolboxPage = React.lazy(() => import('@renderer/pages/toolbox'));
+const AppStorePage = React.lazy(() => import('@renderer/pages/appstore'));
 const WorkbenchPage = React.lazy(() => import('@renderer/pages/workbench'));
 const AdvisorsPage = React.lazy(() => import('@renderer/pages/advisors/AdvisorsPage'));
 const ContentHubPage = React.lazy(() => import('@renderer/pages/contentHub'));
+
+function isDynamicImportFetchError(error: Error): boolean {
+  return /Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module/i.test(
+    error.message
+  );
+}
 
 /** Shown in place of a crashed page (instead of blanking the whole app). */
 const RouteErrorFallback: React.FC<{ error: Error; onRetry: () => void }> = ({ error, onRetry }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const shouldReload = isDynamicImportFetchError(error);
+  const handleRetry = () => {
+    if (shouldReload) {
+      window.location.reload();
+      return;
+    }
+    onRetry();
+  };
+
   return (
     <div className='flex h-full w-full items-center justify-center p-24px'>
       <Result
@@ -44,7 +59,7 @@ const RouteErrorFallback: React.FC<{ error: Error; onRetry: () => void }> = ({ e
           </span>
         }
         extra={[
-          <Button key='retry' type='primary' onClick={onRetry}>
+          <Button key='retry' type='primary' onClick={handleRetry}>
             {t('common.routeError.retry', { defaultValue: '重试' })}
           </Button>,
           <Button key='home' onClick={() => navigate('/guid')}>
@@ -158,10 +173,12 @@ const PanelRoute: React.FC<{ layout: React.ReactElement }> = ({ layout }) => {
           <Route path='/settings/system' element={withRouteFallback(SystemSettings)} />
           <Route path='/settings/about' element={withRouteFallback(SystemSettings)} />
           <Route path='/settings/ext/:tabId' element={withRouteFallback(ExtensionSettingsPage)} />
+          <Route path='/settings/appstore' element={withRouteFallback(AppStorePage)} />
           <Route path='/settings' element={<Navigate to='/settings/model' replace />} />
           <Route path='/test/components' element={withRouteFallback(ComponentsShowcase)} />
-          <Route path='/toolbox' element={withRouteFallback(ToolboxPage)} />
+          <Route path='/appstore' element={<Navigate to='/settings/appstore' replace />} />
           <Route path='/workbench' element={withRouteFallback(WorkbenchPage)} />
+          <Route path='/toolbox' element={<Navigate to='/workbench' replace />} />
           <Route path='/advisors' element={withRouteFallback(AdvisorsPage)} />
           <Route path='/files' element={withRouteFallback(ContentHubPage)} />
           <Route path='/scheduled' element={withRouteFallback(ScheduledTasksPage)} />

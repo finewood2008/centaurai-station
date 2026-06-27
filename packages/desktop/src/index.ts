@@ -13,7 +13,7 @@ import { captureBackendStartupFailure, initSentry, scheduleStartupLogReport, set
 initSentry();
 
 import './process/utils/configureConsoleLog';
-import { app, BrowserWindow, ipcMain, nativeImage, powerMonitor, session } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, powerMonitor, protocol, session } from 'electron';
 import fixPath from 'fix-path';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -223,6 +223,162 @@ let disposeCronResumeListener: (() => void) | null = null;
 // Flag tracking whether the backend subprocess started successfully. Read by
 // the deferred runBackendMigrations trigger in createWindow().
 let backendStartedOk = false;
+
+const IMAGE_WORKBENCH_PROTOCOL = 'centaur-image-workbench';
+const IMAGE_WORKBENCH_TOKENCLUB_PROXY_PREFIX = '/__tokenclub';
+const TOKENCLUB_API_BASE_URL = 'https://api.tokenclub.pro';
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: IMAGE_WORKBENCH_PROTOCOL,
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+    },
+  },
+]);
+
+function getImageWorkbenchRoot(): string {
+  if (app.isPackaged) {
+    return path.join(__dirname, '../renderer/centaur-image-workbench');
+  }
+  return path.resolve(process.cwd(), 'public/centaur-image-workbench');
+}
+
+function getStaticContentType(filePath: string): string {
+  const ext = path.extname(filePath).toLowerCase();
+  switch (ext) {
+    case '.html':
+      return 'text/html; charset=utf-8';
+    case '.js':
+      return 'text/javascript; charset=utf-8';
+    case '.css':
+      return 'text/css; charset=utf-8';
+    case '.json':
+    case '.webmanifest':
+      return 'application/json; charset=utf-8';
+    case '.svg':
+      return 'image/svg+xml';
+    case '.png':
+      return 'image/png';
+    case '.jpg':
+    case '.jpeg':
+      return 'image/jpeg';
+    case '.webp':
+      return 'image/webp';
+    case '.woff':
+      return 'font/woff';
+    case '.woff2':
+      return 'font/woff2';
+    case '.ttf':
+      return 'font/ttf';
+    default:
+      return 'application/octet-stream';
+  }
+}
+
+function registerImageWorkbenchProtocol(): void {
+  const handler = async (request: Request): Promise<Response> => {
+    const root = getImageWorkbenchRoot();
+    const url = new URL(request.url);
+
+    if (url.hostname === 'app' && url.pathname.startsWith(IMAGE_WORKBENCH_TOKENCLUB_PROXY_PREFIX)) {
+      return proxyTokenClubImageWorkbenchRequest(request, url);
+    }
+
+    const requestedPath = decodeURIComponent(url.pathname.replace(/^\/+/, '')) || 'index.html';
+    const filePath = path.resolve(root, requestedPath);
+
+    if (filePath !== root && !filePath.startsWith(`${root}${path.sep}`)) {
+      return new Response('Forbidden', { status: 403 });
+    }
+
+    try {
+      const data = await fs.promises.readFile(filePath);
+      return new Response(data, {
+        headers: {
+          'Content-Type': getStaticContentType(filePath),
+        },
+      });
+    } catch {
+      return new Response('Not Found', { status: 404 });
+    }
+  };
+
+  try {
+    protocol.handle(IMAGE_WORKBENCH_PROTOCOL, handler);
+  } catch (error) {
+    console.warn('[AionUi] Failed to register image workbench protocol on default session:', error);
+  }
+
+  try {
+    session.fromPartition('persist:centaur-image-workbench').protocol.handle(IMAGE_WORKBENCH_PROTOCOL, handler);
+  } catch (error) {
+    console.warn('[AionUi] Failed to register image workbench protocol on workbench session:', error);
+  }
+}
+
+function createCorsHeaders(): Record<string, string> {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type, Accept',
+  };
+}
+
+async function proxyTokenClubImageWorkbenchRequest(request: Request, url: URL): Promise<Response> {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: createCorsHeaders(),
+    });
+  }
+
+  const upstreamPath = url.pathname.slice(IMAGE_WORKBENCH_TOKENCLUB_PROXY_PREFIX.length) || '/';
+  const upstreamUrl = `${TOKENCLUB_API_BASE_URL}${upstreamPath}${url.search}`;
+  const headers = new Headers();
+  const authorization = request.headers.get('authorization');
+  const contentType = request.headers.get('content-type');
+  const accept = request.headers.get('accept');
+  if (authorization) headers.set('authorization', authorization);
+  if (contentType) headers.set('content-type', contentType);
+  if (accept) headers.set('accept', accept);
+
+  try {
+    console.info('[AionUi] TokenClub image workbench proxy request:', {
+      method: request.method,
+      path: upstreamPath,
+    });
+    const upstreamResponse = await fetch(upstreamUrl, {
+      method: request.method,
+      headers,
+      body: request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.arrayBuffer(),
+    });
+    console.info('[AionUi] TokenClub image workbench proxy response:', {
+      method: request.method,
+      path: upstreamPath,
+      status: upstreamResponse.status,
+    });
+    const responseHeaders = new Headers(upstreamResponse.headers);
+    for (const [key, value] of Object.entries(createCorsHeaders())) {
+      responseHeaders.set(key, value);
+    }
+    return new Response(upstreamResponse.body, {
+      status: upstreamResponse.status,
+      statusText: upstreamResponse.statusText,
+      headers: responseHeaders,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('[AionUi] TokenClub image workbench proxy failed:', message);
+    return Response.json(
+      { error: { message: `TokenClub 代理请求失败：${message}` } },
+      { status: 502, headers: createCorsHeaders() }
+    );
+  }
+}
 let backendStartupFailed = false;
 let backendStartupFailureInfo: BackendStartupFailureInfo | null = null;
 let rendererInitialLanguage: string | null = null;
@@ -393,6 +549,7 @@ const createWindow = ({ showOnReady = true }: { showOnReady?: boolean } = {}): v
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       webviewTag: true, // 启用 webview 标签用于 HTML 预览 / Enable webview tag for HTML preview
+      webSecurity: false, // 允许渲染进程跨域直连本地向量库(127.0.0.1:8618)
     },
   });
   console.log(`[AionUi] Main window created (id=${mainWindow.id})`);
@@ -538,6 +695,7 @@ const handleAppReady = async (): Promise<void> => {
   const t0 = performance.now();
   const mark = (label: string) => console.log(`[AionUi:ready] ${label} +${Math.round(performance.now() - t0)}ms`);
   mark('start');
+  registerImageWorkbenchProtocol();
 
   // Grant microphone / audio capture so voice input works natively (this is the
   // whole point of the distributed client — a LAN browser over HTTP can't).
@@ -548,6 +706,32 @@ const handleAppReady = async (): Promise<void> => {
     session.defaultSession.setPermissionCheckHandler((_wc, permission) => permission === 'media');
   } catch (e) {
     console.warn('[AionUi] Failed to set media permission handler:', e);
+  }
+
+  // Scoped CORS bypass for the embedded image workbench (半人马 AI 图形工作台).
+  // Image-generation providers such as Google Gemini (generativelanguage.googleapis.com)
+  // do not send CORS headers, which blocks direct browser calls. We inject permissive CORS
+  // headers ONLY on the dedicated workbench partition session — which only ever loads our
+  // trusted bundled SPA — so users can call any image-model API directly with a pasted key.
+  // The app's default session is untouched, so the blast radius is limited to that sandbox.
+  try {
+    const workbenchSession = session.fromPartition('persist:centaur-image-workbench');
+    workbenchSession.webRequest.onHeadersReceived({ urls: ['http://*/*', 'https://*/*'] }, (details, callback) => {
+      const responseHeaders: Record<string, string[]> = {};
+      for (const [key, value] of Object.entries(details.responseHeaders || {})) {
+        if (/^access-control-allow-/i.test(key)) continue;
+        responseHeaders[key] = Array.isArray(value) ? value : [String(value)];
+      }
+      responseHeaders['Access-Control-Allow-Origin'] = ['*'];
+      responseHeaders['Access-Control-Allow-Methods'] = ['GET, POST, PUT, PATCH, DELETE, OPTIONS'];
+      responseHeaders['Access-Control-Allow-Headers'] = ['*'];
+      callback({
+        responseHeaders,
+        statusLine: details.method === 'OPTIONS' ? 'HTTP/1.1 204 No Content' : undefined,
+      });
+    });
+  } catch (e) {
+    console.warn('[AionUi] Failed to set image-workbench CORS shim:', e);
   }
 
   if (!app.isPackaged) {

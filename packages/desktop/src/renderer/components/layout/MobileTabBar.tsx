@@ -88,7 +88,7 @@ interface TabDef {
 const tabs: TabDef[] = [
   { key: 'chat', label: 'Chat', icon: ChatIcon, path: '/guid' },
   { key: 'scheduled', label: 'Tasks', icon: ScheduledIcon, path: '/scheduled' },
-  { key: 'workbench', label: 'Workbench', icon: WorkbenchIcon, path: '/workbench' },
+  { key: 'workbench', label: 'Studio', icon: WorkbenchIcon, path: '/workbench' },
   { key: 'settings', label: 'Settings', icon: SettingsIcon, path: '/settings/model' },
 ];
 
