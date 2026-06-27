@@ -47,8 +47,9 @@
     "uncategorized": "Kategorisiz",
     "upload": "Paylaşılan kitaplığa yükle",
     "download": "İndir",
-    "empty": "Paylaşılan kitaplık boş",
-    "comingSoon": "Paylaşılan kitaplık yakında geliyor"
+    "empty": "Henüz paylaşılan çıktı yok. Bir sohbette \"Ekiple paylaş\"a tıklayarak çıktıları buraya gönderin.",
+    "comingSoon": "Paylaşılan kitaplık yakında geliyor",
+    "purpose": "Ekiple paylaşılan AI çıktıları"
   },
   "toast": {
     "copied": "Kopyalandı",
@@ -124,6 +125,7 @@
     "saveHere": "Buraya kaydet",
     "noSubfolders": "Alt klasör yok",
     "savedToNas": "Ağ sürücüsüne kaydedildi",
-    "saveToNasFailed": "Ağ sürücüsüne kaydedilemedi"
+    "saveToNasFailed": "Ağ sürücüsüne kaydedilemedi",
+    "purpose": "Şirket paylaşılan diski · dosya yükleyip düzenleyin, bilgi tabanına indeksleyin"
   }
 }

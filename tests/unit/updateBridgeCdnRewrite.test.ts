@@ -113,6 +113,13 @@ const getCheckHandler = async () => {
   return lastCall[0];
 };
 
+const getStatusEmitter = async () => {
+  vi.resetModules();
+  const { createAutoUpdateStatusBroadcast } = await import('@process/bridge/updateBridge');
+  const { ipcBridge } = await import('@/common');
+  return { broadcast: createAutoUpdateStatusBroadcast(), ipcBridge };
+};
+
 describe('updateBridge CDN URL rewriting', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -160,6 +167,37 @@ describe('updateBridge CDN URL rewriting', () => {
       const asset = result.data?.latest?.assets?.[0];
       expect(asset?.url).toMatch(/^https:\/\/static\.aionui\.com\/releases\/1\.9\.22\//);
       expect(asset?.url).not.toMatch(/\/v1\.9\.22\//);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('rewrites legacy GitHub repo links in release notes and release page URLs', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [
+        {
+          tag_name: 'v2.1.18',
+          name: 'v2.1.18',
+          body: '**Full Changelog**: https://github.com/finewood2008/centaurai-aionui/commits/v2.1.18',
+          html_url: 'https://github.com/finewood2008/centaurai-aionui/releases/tag/v2.1.18',
+          published_at: '2026-06-26T00:00:00Z',
+          prerelease: false,
+          draft: false,
+          assets: [],
+        },
+      ],
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    try {
+      const handler = await getCheckHandler();
+      const result = await handler({});
+
+      expect(result.success).toBe(true);
+      expect(result.data?.latest?.htmlUrl).toBe('https://github.com/finewood2008/centaurai-station/releases/tag/v2.1.18');
+      expect(result.data?.latest?.body).toContain('https://github.com/finewood2008/centaurai-station/commits/v2.1.18');
+      expect(result.data?.latest?.body).not.toContain('centaurai-aionui');
     } finally {
       vi.unstubAllGlobals();
     }
@@ -226,5 +264,27 @@ describe('updateBridge allowlist includes CDN host', () => {
 
     // Download is refused before any network I/O; exact error text comes from i18n and isn't asserted here.
     expect(result.success).toBe(false);
+  });
+});
+
+describe('updateBridge auto-update status broadcasting', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('rewrites legacy GitHub repo links in auto-update release notes', async () => {
+    const { broadcast, ipcBridge } = await getStatusEmitter();
+
+    broadcast({
+      status: 'available',
+      version: '2.1.18',
+      releaseNotes: '**Full Changelog**: https://github.com/finewood2008/centaurai-aionui/commits/v2.1.18',
+    });
+
+    expect(ipcBridge.autoUpdate.status.emit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        releaseNotes: '**Full Changelog**: https://github.com/finewood2008/centaurai-station/commits/v2.1.18',
+      })
+    );
   });
 });

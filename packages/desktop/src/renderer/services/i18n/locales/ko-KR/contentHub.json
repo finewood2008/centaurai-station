@@ -47,8 +47,9 @@
     "uncategorized": "미분류",
     "upload": "공유 라이브러리에 업로드",
     "download": "다운로드",
-    "empty": "공유 라이브러리가 비어 있습니다",
-    "comingSoon": "공유 라이브러리가 곧 제공됩니다"
+    "empty": "아직 공유된 산출물이 없습니다. 대화에서 \"팀에 공유\"를 누르면 여기에 표시됩니다.",
+    "comingSoon": "공유 라이브러리가 곧 제공됩니다",
+    "purpose": "팀과 공유하는 AI 산출물"
   },
   "toast": {
     "copied": "복사됨",
@@ -124,6 +125,7 @@
     "saveHere": "여기에 저장",
     "noSubfolders": "하위 폴더가 없습니다",
     "savedToNas": "네트워크 드라이브에 저장했습니다",
-    "saveToNasFailed": "네트워크 드라이브에 저장하지 못했습니다"
+    "saveToNasFailed": "네트워크 드라이브에 저장하지 못했습니다",
+    "purpose": "회사 공유 디스크 · 파일 업로드·정리, 지식베이스 색인 가능"
   }
 }

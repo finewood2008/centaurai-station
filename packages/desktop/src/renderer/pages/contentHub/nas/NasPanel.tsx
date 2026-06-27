@@ -360,6 +360,10 @@ const NasPanel: React.FC<NasPanelProps> = ({ search = '' }) => {
         />
       </div>
 
+      {/* Purpose hint at the root — clarifies this is the company file cabinet,
+          distinct from the AI-artifact 共享库. */}
+      {!path && <div className='mb-8px shrink-0 px-4px text-12px text-t-tertiary'>{t('contentHub.nas.purpose')}</div>}
+
       {/* Knowledge-base indexing progress banner */}
       {indexJob && indexJob.p.phase !== 'done' && indexJob.p.phase !== 'error' && (
         <div className='mb-8px shrink-0 rd-8px bg-fill-2 px-12px py-8px text-12px text-t-secondary flex items-center gap-8px'>

@@ -58,7 +58,7 @@ export type StaticServerOptions = {
   sharedDriveDir?: string;
   /**
    * Root of the enterprise LAN network drive (the company's large shared disk),
-   * browsed read-only at /api/nas/*. Omit to disable (list returns []).
+   * browsed and managed at /api/nas/*. Omit to disable (list returns []).
    */
   nasRootDir?: string;
   /**
@@ -582,7 +582,7 @@ export async function startStaticServer(opts: StaticServerOptions): Promise<Stat
         return;
       }
 
-      // /api/nas/* — enterprise LAN network drive (read-only), served LOCALLY
+      // /api/nas/* — enterprise LAN network drive (read + write), served LOCALLY
       // (NOT proxied to aioncore). Must come before the generic /api/* proxy.
       if (req.url.startsWith('/api/nas/')) {
         if (req.url.startsWith('/api/nas/list')) await handleNasList(req, res, opts.nasRootDir);

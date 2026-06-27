@@ -47,8 +47,9 @@
     "uncategorized": "未分類",
     "upload": "上傳到共享庫",
     "download": "下載",
-    "empty": "共享庫為空",
-    "comingSoon": "共享庫即將上線"
+    "empty": "還沒有共享的產物。在對話裡點「分享到團隊」就會出現在這裡。",
+    "comingSoon": "共享庫即將上線",
+    "purpose": "團隊共享的 AI 產物"
   },
   "toast": {
     "copied": "已複製",
@@ -124,6 +125,7 @@
     "saveHere": "儲存到此處",
     "noSubfolders": "沒有子資料夾",
     "savedToNas": "已儲存到網路硬碟",
-    "saveToNasFailed": "儲存到網路硬碟失敗"
+    "saveToNasFailed": "儲存到網路硬碟失敗",
+    "purpose": "公司共享磁碟 · 上傳整理檔案，可索引到知識庫"
   }
 }

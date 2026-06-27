@@ -47,8 +47,9 @@
     "uncategorized": "Sem categoria",
     "upload": "Enviar para a biblioteca compartilhada",
     "download": "Baixar",
-    "empty": "A biblioteca compartilhada está vazia",
-    "comingSoon": "A biblioteca compartilhada estará disponível em breve"
+    "empty": "Ainda não há artefatos compartilhados. Numa conversa, clique em \"Compartilhar com a equipe\" para enviar saídas aqui.",
+    "comingSoon": "A biblioteca compartilhada estará disponível em breve",
+    "purpose": "Artefatos de IA compartilhados com a equipe"
   },
   "toast": {
     "copied": "Copiado",
@@ -124,6 +125,7 @@
     "saveHere": "Salvar aqui",
     "noSubfolders": "Sem subpastas",
     "savedToNas": "Salvo na unidade de rede",
-    "saveToNasFailed": "Não foi possível salvar na unidade de rede"
+    "saveToNasFailed": "Não foi possível salvar na unidade de rede",
+    "purpose": "Disco compartilhado da empresa · envie e organize arquivos, indexe na base de conhecimento"
   }
 }
